@@ -1,0 +1,18 @@
+{
+  "esnext": true,
+  "strict": true,
+  "node": true,
+  "browser": true,
+  "quotmark": "single",
+  "unused": true,
+  "jasmine": true,
+  "mocha": true,
+  "eqeqeq": true,
+  "maxcomplexity": 10,
+  "predef": [
+     "angular",
+     "inject",
+     "sinon",
+     "$"
+   ]
+}
