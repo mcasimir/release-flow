@@ -12,6 +12,7 @@
     "pushover": "1.3.6"
   },
   "dependencies": {
+    "conventional-commits-filter": "1.0.0",
     "conventional-commits-parser": "1.2.2"
   }
 }
