@@ -1,7 +1,9 @@
 'use strict';
 
 let Release = require('.');
-let release = new Release();
+let release = new Release({
+  logLevel: 'debug'
+});
 
 release.start()
   .then(function() {
