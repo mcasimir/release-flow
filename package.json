@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "conventional-commits-filter": "1.0.0",
-    "conventional-commits-parser": "1.2.2"
+    "conventional-commits-parser": "1.2.2",
+    "semver": "5.1.0"
   }
 }
