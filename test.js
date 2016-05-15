@@ -10,5 +10,5 @@ release.start()
     console.log('OK');
   })
   .catch(function(err) {
-    console.log(err);
+    console.log(err.stack);
   });
