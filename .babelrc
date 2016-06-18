@@ -8,5 +8,10 @@
     "syntax-async-functions",
     "transform-regenerator",
     "transform-class-properties"
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": ["__coverage__"]
+    }
+  }
 }

@@ -1,3 +1,4 @@
+import memoize from 'memoize-decorator';
 import conventionalCommitsFilter from 'conventional-commits-filter';
 import conventionalCommitsParser from 'conventional-commits-parser';
 import execCommand from './execCommand';
@@ -8,25 +9,34 @@ const HASH_DELIMITER = '-hash-';
 export default class Git {
   constructor(options = {}) {
     this.options = options;
-    this.remoteName = options.remoteName;
-    if (this.options.repoHttpUrl) {
-      this.repoHttpUrl = this.options.repoHttpUrl;
-    } else {
-      let protocol = this.options.repoHttpProtocol;
-      let remoteUrl = this.remoteUrl();
-      remoteUrl = remoteUrl
-        .replace(/^[^@]*@/, '')
-        .replace(/:/g, '/')
-        .replace(/\.git$/, '');
-      this.repoHttpUrl = `${protocol}://${remoteUrl}`;
-    }
-
     this.conventionalCommitsFilter = options.conventionalCommitsFilter ||
       conventionalCommitsFilter;
     this.conventionalCommitsParser = options.conventionalCommitsParser ||
       conventionalCommitsParser;
     this.execCommand = options.execCommand ||
       execCommand;
+  }
+
+  @memoize
+  get remoteUrl() {
+    return this.execCommand(
+      `git config --get remote.${this.options.remoteName}.url`
+    );
+  }
+
+  @memoize
+  get repoHttpUrl() {
+    if (this.options.repoHttpUrl) {
+      return this.options.repoHttpUrl;
+    }
+
+    let protocol = this.options.repoHttpProtocol;
+    let remoteUrl = this.remoteUrl
+        .replace(/^[^@]*@/, '')
+        .replace(/:/g, '/')
+        .replace(/\.git$/, '');
+
+    return `${protocol}://${remoteUrl}`;
   }
 
   openBranch(branchName) {
@@ -43,7 +53,7 @@ export default class Git {
   }
 
   pushRef(refName) {
-    this.execCommand(`git push ${this.remoteName} ${refName}`);
+    this.execCommand(`git push ${this.options.remoteName} ${refName}`);
   }
 
   link(path) {
@@ -59,15 +69,11 @@ export default class Git {
     return this.link(`/compare/${from}..${to}`);
   }
 
-  remoteUrl() {
-    return this.execCommand(`git config --get remote.${this.remoteName}.url`);
-  }
-
   fetchHeadsAndTags() {
     return this.execCommand([
       'git fetch',
-      this.remoteName,
-      `refs/heads/*:refs/remotes/${this.remoteName}/*`,
+      this.options.remoteName,
+      `refs/heads/*:refs/remotes/${this.options.remoteName}/*`,
       '+refs/tags/*:refs/tags/*'
     ].join(' '));
   }

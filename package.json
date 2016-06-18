@@ -4,12 +4,25 @@
   "description": "Git flow conventional releases",
   "main": "dist/Release.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-register --require babel-polyfill 'test/**/*.spec.js'",
+    "test:unit": "mocha --compilers js:babel-register --require babel-polyfill 'test/**/*.spec.js'",
+    "test": "NODE_ENV=test nyc -r lcov -r text npm run test:unit",
+    "test:ci": "npm run lint && npm test",
     "lint": "eslint . --quiet",
     "build": "babel src -d lib"
   },
+  "pre-commit": "build",
   "bin": {
     "release-flow": "./lib/cli.js"
+  },
+  "nyc": {
+    "include": [
+      "src/*.js"
+    ],
+    "require": [
+      "babel-register"
+    ],
+    "sourceMap": false,
+    "instrument": false
   },
   "author": "mcasimir (https://github.com/mcasimir)",
   "license": "ISC",
@@ -17,14 +30,14 @@
     "chalk": "1.1.3",
     "conventional-commits-filter": "1.0.0",
     "conventional-commits-parser": "1.2.2",
+    "memoize-decorator": "1.0.2",
     "prepend-file": "1.3.0",
     "semver": "5.1.0",
     "yargs": "4.7.0"
   },
   "devDependencies": {
-    "mocha": "2.5.3",
-    "sinon": "1.17.4",
     "babel-core": "6.9.1",
+    "babel-eslint": "6.0.4",
     "babel-plugin-syntax-async-functions": "6.8.0",
     "babel-plugin-transform-class-properties": "6.9.0",
     "babel-plugin-transform-decorators-legacy": "1.3.4",
@@ -34,8 +47,10 @@
     "babel-preset-es2015": "6.5.0",
     "babel-preset-stage-0": "6.5.0",
     "eslint": "2.11.1",
-    "babel-eslint": "6.0.4",
     "eslint-config-google": "0.5.0",
-    "eslint-plugin-babel": "3.2.0"
+    "eslint-plugin-babel": "3.2.0",
+    "mocha": "2.5.3",
+    "pre-commit": "1.1.3",
+    "sinon": "1.17.4"
   }
 }
