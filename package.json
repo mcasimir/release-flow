@@ -10,7 +10,7 @@
     "lint": "eslint . --quiet",
     "build": "babel src -d lib"
   },
-  "pre-commit": "build",
+  "pre-commit": "lint",
   "bin": {
     "release-flow": "./lib/cli.js"
   },
