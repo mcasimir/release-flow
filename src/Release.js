@@ -1,30 +1,12 @@
-'use strict';
+import DefaultErrorFactory from './DefaultErrorFactory';
+import DefaultLogger from './DefaultLogger';
+import Git from './Git';
+import Start from './phases/Start';
+import Publish from './phases/Publish';
+import Finish from './phases/Finish';
+import defaults from './defaults';
 
-let DefaultErrorFactory = require('./DefaultErrorFactory');
-let DefaultLogger = require('./DefaultLogger');
-let Git = require('./Git');
-let Start = require('./phases/Start');
-let Publish = require('./phases/Publish');
-let Finish = require('./phases/Finish');
-let pathResolve = require('path').resolve;
-
-const DEFAULT_OPTIONS = {
-  developmentBranch: 'develop',
-  productionBranch: 'master',
-  releaseBranchPrefix: 'release/',
-  tagPrefix: 'v',
-  remoteName: 'origin',
-  logLevel: 'info',
-  initialVersion: '1.0.0',
-  repoHttpUrl: null,
-  changelogPath: pathResolve(process.cwd(), 'CHANGELOG.md'),
-  repoHttpProtocol: 'https',
-  getBump: require('./defaults/get-bump.js'),
-  changelogTemplate: require('./defaults/changelog-template.js'),
-  plugins: []
-};
-
-class Release {
+export default class Release {
 
   static get plugins() {
     this._plugins = this._plugins || {};
@@ -36,7 +18,7 @@ class Release {
   }
 
   constructor(options) {
-    options = Object.assign({}, DEFAULT_OPTIONS, options);
+    options = Object.assign({}, defaults, options);
     this.options = options;
     this.phases = {
       start: new Start(),
@@ -48,7 +30,7 @@ class Release {
     this.logger = new DefaultLogger(options);
     this.git = new Git(options);
 
-    (options.plugins || []).forEach((plugin) => {
+    (options.plugins || []).forEach(plugin => {
       this.plugin(plugin);
     });
   }
@@ -76,8 +58,7 @@ class Release {
     return this.errorFactory.create.apply(this.errorFactory, arguments);
   }
 
-  plugin(fnOrString, options) {
-    options = options || {};
+  plugin(fnOrString, options = {}) {
     if (typeof fnOrString === 'function') {
       fnOrString(this, options);
     } else {
@@ -85,5 +66,3 @@ class Release {
     }
   }
 }
-
-module.exports = Release;

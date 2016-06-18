@@ -1,10 +1,4 @@
-'use strict';
-
-class Sequence extends Array {
-  constructor() {
-    super();
-  }
-
+export default class Sequence extends Array {
   run(args) {
     args = args || {};
     return this.reduce((acc, curr) => {
@@ -25,5 +19,3 @@ class Sequence extends Array {
     }, Promise.resolve(args));
   }
 }
-
-module.exports = Sequence;

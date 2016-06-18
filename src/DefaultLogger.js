@@ -1,26 +1,24 @@
-'use strict';
-
-let chalk = require('chalk');
+import chalk from 'chalk';
 
 const LEVELS = {
-  'error': 0,
-  'warn': 1,
-  'info': 2,
-  'debug': 3
+  error: 0,
+  warn: 1,
+  info: 2,
+  debug: 3
 };
 
 const COLORS = {
-  'error': 'red',
-  'warn': 'yellow',
-  'info': 'white',
-  'debug': 'gray'
+  error: 'red',
+  warn: 'yellow',
+  info: 'white',
+  debug: 'gray'
 };
 
 const DEFAULT_OPTIONS = {
   logLevel: 'info'
 };
 
-class DefaultLogger {
+export default class DefaultLogger {
   constructor(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
     this.level = options.logLevel;
@@ -44,13 +42,18 @@ class DefaultLogger {
 
   log(level, message, metadata) {
     if (LEVELS[this.level] >= LEVELS[level]) {
-      let args = [chalk.styles[COLORS[level]].open + chalk.bold(`${level}:`), `${message}` + chalk.styles[COLORS[level]].close, metadata];
+      let args = [
+        chalk.styles[COLORS[level]].open + chalk.bold(`${level}:`),
+        `${message}` + chalk.styles[COLORS[level]].close,
+        metadata
+      ];
+
       if (metadata === null || metadata === undefined) {
         args.pop();
       }
+
+      // eslint-disable-next-line no-console
       console.log.apply(console, args);
     }
   }
 }
-
-module.exports = DefaultLogger;

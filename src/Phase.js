@@ -1,10 +1,9 @@
-'use strict';
+import Sequence from './Sequence';
+export {default as Step} from './Step';
 
-let Sequence = require('./Sequence');
-
-class Phase {
+export default class Phase {
   constructor() {
-    this.steps = new Sequence();
+    this.steps = this.constructor.steps || new Sequence();
   }
 
   step(step) {
@@ -25,5 +24,3 @@ class Phase {
     return this.steps.run(args);
   }
 }
-
-module.exports = Phase;

@@ -1,19 +1,22 @@
-'use strict';
-
-module.exports = function(context) {
+export default function(context) {
   let release = context.release;
   let lines = [`<a name="${release.name}"></a>`];
   let level = 0;
 
   release.changes.traverse(
-    (entry) => {
+    entry => {
       level++;
 
       if (level !== 1 && !entry.isLeaf()) {
         lines.push('');
       }
 
-      let titleBullet = (entry.isLeaf() ? '-' : Array(level + 1).join('#')) + ' ';
+      let titleBullet = (
+          entry.isLeaf() ?
+            '-' :
+            Array(level + 1).join('#')
+      ) + ' ';
+
       let subject = entry.subject;
       let scope = entry.scope || '';
       let links = entry.links.map(function(link) {
@@ -43,4 +46,4 @@ module.exports = function(context) {
     });
 
   return lines.join('\n');
-};
+}

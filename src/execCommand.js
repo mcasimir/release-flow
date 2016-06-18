@@ -1,10 +1,6 @@
-'use strict';
+import {execSync} from 'child_process';
 
-let execSync = require('child_process').execSync;
-
-module.exports = function execCommand(cmd, options) {
-  options = options || {};
-
+export default function execCommand(cmd, options = {}) {
   let stdout = execSync(cmd)
     .toString()
     .trim();
@@ -20,4 +16,4 @@ module.exports = function execCommand(cmd, options) {
   }
 
   return stdout;
-};
+}

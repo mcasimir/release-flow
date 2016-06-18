@@ -1,15 +1,12 @@
-'use strict';
+import conventionalCommitsFilter from 'conventional-commits-filter';
+import conventionalCommitsParser from 'conventional-commits-parser';
+import execCommand from './execCommand';
 
 const COMMIT_SEPARATOR = '[----COMMIT--END----]';
 const HASH_DELIMITER = '-hash-';
 
-let conventionalCommitsFilter = require('conventional-commits-filter');
-let conventionalCommitsParser = require('conventional-commits-parser');
-let execCommand = require('./execCommand');
-
-class Git {
-  constructor(options) {
-    options = options || {};
+export default class Git {
+  constructor(options = {}) {
     this.options = options;
     this.remoteName = options.remoteName;
     if (this.options.repoHttpUrl) {
@@ -21,18 +18,24 @@ class Git {
         .replace(/^[^@]*@/, '')
         .replace(/:/g, '/')
         .replace(/\.git$/, '');
-
       this.repoHttpUrl = `${protocol}://${remoteUrl}`;
     }
+
+    this.conventionalCommitsFilter = options.conventionalCommitsFilter ||
+      conventionalCommitsFilter;
+    this.conventionalCommitsParser = options.conventionalCommitsParser ||
+      conventionalCommitsParser;
+    this.execCommand = options.execCommand ||
+      execCommand;
   }
 
   openBranch(branchName) {
-    execCommand(`git checkout -b ${branchName}`);
+    this.execCommand(`git checkout -b ${branchName}`);
   }
 
   commitAll(message) {
-    execCommand(`git add .`);
-    execCommand(`git commit -m '${message}'`);
+    this.execCommand('git add .');
+    this.execCommand(`git commit -m '${message}'`);
   }
 
   pushCurrentBranch() {
@@ -40,7 +43,7 @@ class Git {
   }
 
   pushRef(refName) {
-    execCommand(`git push ${this.remoteName} ${refName}`);
+    this.execCommand(`git push ${this.remoteName} ${refName}`);
   }
 
   link(path) {
@@ -57,43 +60,53 @@ class Git {
   }
 
   remoteUrl() {
-    return execCommand(`git config --get remote.${this.remoteName}.url`);
+    return this.execCommand(`git config --get remote.${this.remoteName}.url`);
   }
 
   fetchHeadsAndTags() {
-    return execCommand(`git fetch ${this.remoteName} refs/heads/*:refs/remotes/${this.remoteName}/* +refs/tags/*:refs/tags/*`);
+    return this.execCommand([
+      'git fetch',
+      this.remoteName,
+      `refs/heads/*:refs/remotes/${this.remoteName}/*`,
+      '+refs/tags/*:refs/tags/*'
+    ].join(' '));
   }
 
   currentBranch() {
-    return execCommand('git rev-parse --abbrev-ref HEAD');
+    return this.execCommand('git rev-parse --abbrev-ref HEAD');
   }
 
   hasUntrackedChanges() {
-    return !!execCommand('git status --porcelain').length;
+    return Boolean(this.execCommand('git status --porcelain').length);
   }
 
   hasUnpushedCommits() {
-    return !!execCommand('git --no-pager cherry -v').length;
+    return Boolean(this.execCommand('git --no-pager cherry -v').length);
   }
 
   localTags() {
-    return execCommand(`git log --no-walk --tags --pretty="%h %d %s" --decorate=full`, {splitLines: true})
-      .filter(function(line) {
+    return this.execCommand(
+        'git log --no-walk --tags --pretty="%h %d %s" --decorate=full'
+      , {
+        splitLines: true
+      })
+      .filter(line => {
         return line.match(/\(tag: refs\/tags\//);
       })
-      .map(function(line) {
+      .map(line => {
         return line.match(/\(tag: refs\/tags\/([^,\)]+)/)[1];
       });
   }
 
   hasLocalTags() {
-    return !!this.localTags().length;
+    return Boolean(this.localTags().length);
   }
 
   lastLocalTagSha() {
     return this.hasLocalTags() &&
-      execCommand('git --no-pager log --no-walk --tags --pretty="%h" --decorate=short -1') ||
-        null;
+      this.execCommand(
+        'git --no-pager log --no-walk --tags --pretty="%h" --decorate=short -1'
+      ) || null;
   }
 
   lastTagName() {
@@ -103,14 +116,18 @@ class Git {
 
   commits(fromSha, options) {
     let range = fromSha ? `${fromSha}..` : '';
-    let rawCommits = execCommand(`git --no-pager log --pretty='format:%B%n${HASH_DELIMITER}%n%H${COMMIT_SEPARATOR}' ${range}`)
+    let rawCommits = this.execCommand([
+      'git --no-pager log',
+      `--pretty='format:%B%n${HASH_DELIMITER}%n%H${COMMIT_SEPARATOR}'`,
+      range
+    ].join(' '))
       .split(COMMIT_SEPARATOR)
-      .filter(function(line) {
+      .filter(line => {
         return line;
       });
 
-    let commits = rawCommits.map(function(rawCommit) {
-      let commit = conventionalCommitsParser.sync(rawCommit, options);
+    let commits = rawCommits.map(rawCommit => {
+      let commit = this.conventionalCommitsParser.sync(rawCommit, options);
 
       if (commit.header && commit.header.match('BREAKING') ||
         commit.footer && commit.footer.match('BREAKING')) {
@@ -124,7 +141,7 @@ class Git {
       return commit;
     });
 
-    return conventionalCommitsFilter(commits);
+    return this.conventionalCommitsFilter(commits);
   }
 
   hasLocalTag(tagName) {
@@ -135,5 +152,3 @@ class Git {
     return this.currentBranch() === branchName;
   }
 }
-
-module.exports = Git;

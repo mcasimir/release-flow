@@ -1,8 +1,5 @@
-'use strict';
-
-class ChangelogEntry {
-  constructor(subject, options) {
-    options = options || {};
+export default class ChangelogEntry {
+  constructor(subject, options = {}) {
     this.subject = subject;
     this.scope = options.scope;
     this.subjectLink = options.subjectLink;
@@ -42,12 +39,3 @@ class ChangelogEntry {
     postvisit(this);
   }
 }
-
-class Changelog extends ChangelogEntry {
-  constructor(release) {
-    super(release.name);
-    this.Entry = ChangelogEntry;
-  }
-}
-
-module.exports = Changelog;

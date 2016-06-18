@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = function(commits) {
+export default function(commits) {
   let bump = 'patch';
   commits.forEach(function(commit) {
     if (commit.breaking) {
@@ -10,4 +8,4 @@ module.exports = function(commits) {
     }
   });
   return bump;
-};
+}
