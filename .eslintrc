@@ -44,6 +44,8 @@
     "no-mixed-spaces-and-tabs": 2,
     "quote-props": [2, "as-needed"],
     "padded-blocks": 0,
-    "require-jsdoc": 0
+    "require-jsdoc": 0,
+    "generator-star-spacing": 0,
+    "babel/generator-star-spacing": 1
   }
 }

@@ -5,10 +5,15 @@ import execCommand from './execCommand';
 
 const COMMIT_SEPARATOR = '[----COMMIT--END----]';
 const HASH_DELIMITER = '-hash-';
+const GIT_DEFAULT_OPTIONS = {
+  remoteName: 'origin',
+  repoHttpProtocol: 'http'
+};
 
 export default class Git {
-  constructor(options = {}) {
-    this.options = options;
+
+  constructor(options) {
+    this.options = Object.assign(GIT_DEFAULT_OPTIONS, options);
     this.conventionalCommitsFilter = options.conventionalCommitsFilter ||
       conventionalCommitsFilter;
     this.conventionalCommitsParser = options.conventionalCommitsParser ||
@@ -31,12 +36,16 @@ export default class Git {
     }
 
     let protocol = this.options.repoHttpProtocol;
-    let remoteUrl = this.remoteUrl
+    let remoteUrl = this._remoteUrlToHttpUrl(this.remoteUrl);
+
+    return `${protocol}://${remoteUrl}`;
+  }
+
+  _remoteUrlToHttpUrl(remoteUrl) {
+    return remoteUrl
         .replace(/^[^@]*@/, '')
         .replace(/:/g, '/')
         .replace(/\.git$/, '');
-
-    return `${protocol}://${remoteUrl}`;
   }
 
   openBranch(branchName) {
@@ -58,7 +67,8 @@ export default class Git {
 
   link(path) {
     path = (path || '').replace(/^\//, '');
-    return this.repoHttpUrl + '/' + path;
+    let base = this.repoHttpUrl.replace(/\/$/, '');
+    return base + '/' + path;
   }
 
   commitLink(commit) {

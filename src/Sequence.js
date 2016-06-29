@@ -1,12 +1,17 @@
-export default class Sequence extends Array {
+export default class Sequence {
+
+  constructor() {
+    this._runnables = [];
+  }
+
   run(args) {
     args = args || {};
-    return this.reduce((acc, curr) => {
+    return this._runnables.reduce((acc, curr) => {
       return acc.then(function() {
         let promise;
 
         try {
-          promise = curr instanceof Sequence ?
+          promise = curr.run instanceof Function ?
             curr.run(args) :
             Promise.resolve(curr(args));
         } catch (e) {
@@ -18,4 +23,9 @@ export default class Sequence extends Array {
 
     }, Promise.resolve(args));
   }
+
+  push(runnable) {
+    this._runnables.push(runnable);
+  }
+
 }
