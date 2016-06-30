@@ -2,6 +2,7 @@ import memoize from 'memoize-decorator';
 import conventionalCommitsFilter from 'conventional-commits-filter';
 import conventionalCommitsParser from 'conventional-commits-parser';
 import execCommand from './execCommand';
+import {gt as semverGt, valid as semverValid} from 'semver';
 
 const COMMIT_SEPARATOR = '[----COMMIT--END----]';
 const HASH_DELIMITER = '-hash-';
@@ -10,9 +11,11 @@ const GIT_DEFAULT_OPTIONS = {
   repoHttpProtocol: 'http'
 };
 
+const TAG_HISTORY_RE = /^([0-9a-f]{5,40})\s+\(tag: refs\/tags\/([^,\)]+)/;
+
 export default class Git {
 
-  constructor(options) {
+  constructor(options = {}) {
     this.options = Object.assign(GIT_DEFAULT_OPTIONS, options);
     this.conventionalCommitsFilter = options.conventionalCommitsFilter ||
       conventionalCommitsFilter;
@@ -100,22 +103,38 @@ export default class Git {
     return Boolean(this.execCommand('git --no-pager cherry -v').length);
   }
 
-  localTags() {
-    return this.execCommand(
+  parseTagHistoryLine(line) {
+    let tagMatch = line.match(TAG_HISTORY_RE);
+    if (tagMatch) {
+      return {
+        sha: tagMatch[1],
+        name: tagMatch[2]
+      };
+    }
+  }
+
+  @memoize
+  getLocalTags() {
+    let tagHistory = this.execCommand(
         'git log --no-walk --tags --pretty="%h %d %s" --decorate=full'
       , {
         splitLines: true
       })
-      .filter(line => {
-        return line.match(/\(tag: refs\/tags\//);
-      })
       .map(line => {
-        return line.match(/\(tag: refs\/tags\/([^,\)]+)/)[1];
+        return this.parseTagHistoryLine(line);
+      })
+      .filter(line => line)
+      .filter(tag => {
+        return semverValid(tag.name);
       });
+
+    return tagHistory.sort((tag1, tag2) => {
+      return semverGt(tag1.name, tag2.name);
+    });
   }
 
   hasLocalTags() {
-    return Boolean(this.localTags().length);
+    return Boolean(this.getLocalTags().length);
   }
 
   lastLocalTagSha() {
@@ -125,9 +144,22 @@ export default class Git {
       ) || null;
   }
 
+  @memoize
   lastTagName() {
-    let tags = this.localTags();
-    return tags[tags.length];
+    let tags = this.getLocalTags();
+    let lastTag = tags[tags.length];
+    return lastTag && lastTag.name;
+  }
+
+  hasLocalTag(tagName) {
+    let found = this.getLocalTags().find(tag => {
+      return tag.name === tagName;
+    });
+    return Boolean(found);
+  }
+
+  isCurrentBranch(branchName) {
+    return this.currentBranch() === branchName;
   }
 
   commits(fromSha, options) {
@@ -158,13 +190,5 @@ export default class Git {
     });
 
     return this.conventionalCommitsFilter(commits);
-  }
-
-  hasLocalTag(tagName) {
-    return this.localTags().indexOf(tagName) !== -1;
-  }
-
-  isCurrentBranch(branchName) {
-    return this.currentBranch() === branchName;
   }
 }
