@@ -26,20 +26,20 @@ export default class Git {
   }
 
   @memoize
-  get remoteUrl() {
+  getRemoteUrl() {
     return this.execCommand(
       `git config --get remote.${this.options.remoteName}.url`
     );
   }
 
   @memoize
-  get repoHttpUrl() {
+  getRepoHttpUrl() {
     if (this.options.repoHttpUrl) {
       return this.options.repoHttpUrl;
     }
 
     let protocol = this.options.repoHttpProtocol;
-    let remoteUrl = this._remoteUrlToHttpUrl(this.remoteUrl);
+    let remoteUrl = this._remoteUrlToHttpUrl(this.getRemoteUrl());
 
     return `${protocol}://${remoteUrl}`;
   }
@@ -61,7 +61,7 @@ export default class Git {
   }
 
   pushCurrentBranch() {
-    this.pushRef(this.currentBranch());
+    this.pushRef(this.getCurrentBranch());
   }
 
   pushRef(refName) {
@@ -70,7 +70,7 @@ export default class Git {
 
   link(path) {
     path = (path || '').replace(/^\//, '');
-    let base = this.repoHttpUrl.replace(/\/$/, '');
+    let base = this.getRepoHttpUrl().replace(/\/$/, '');
     return base + '/' + path;
   }
 
@@ -91,7 +91,7 @@ export default class Git {
     ].join(' '));
   }
 
-  currentBranch() {
+  getCurrentBranch() {
     return this.execCommand('git rev-parse --abbrev-ref HEAD');
   }
 
@@ -103,7 +103,7 @@ export default class Git {
     return Boolean(this.execCommand('git --no-pager cherry -v').length);
   }
 
-  parseTagHistoryLine(line) {
+  _parseTagHistoryLine(line) {
     let tagMatch = line.match(TAG_HISTORY_RE);
     if (tagMatch) {
       return {
@@ -121,7 +121,7 @@ export default class Git {
         splitLines: true
       })
       .map(line => {
-        return this.parseTagHistoryLine(line);
+        return this._parseTagHistoryLine(line);
       })
       .filter(line => line)
       .filter(tag => {
@@ -137,17 +137,17 @@ export default class Git {
     return Boolean(this.getLocalTags().length);
   }
 
-  lastLocalTagSha() {
-    return this.hasLocalTags() &&
-      this.execCommand(
-        'git --no-pager log --no-walk --tags --pretty="%h" --decorate=short -1'
-      ) || null;
+  @memoize
+  getLastLocalTagSha() {
+    let tags = this.getLocalTags();
+    let lastTag = tags[tags.length - 1];
+    return lastTag && lastTag.sha;
   }
 
   @memoize
-  lastTagName() {
+  getLastLocalTagName() {
     let tags = this.getLocalTags();
-    let lastTag = tags[tags.length];
+    let lastTag = tags[tags.length - 1];
     return lastTag && lastTag.name;
   }
 
@@ -159,36 +159,41 @@ export default class Git {
   }
 
   isCurrentBranch(branchName) {
-    return this.currentBranch() === branchName;
+    return this.getCurrentBranch() === branchName;
   }
 
-  commits(fromSha, options) {
+  getRawCommits(fromSha) {
     let range = fromSha ? `${fromSha}..` : '';
-    let rawCommits = this.execCommand([
+    return this.execCommand([
       'git --no-pager log',
       `--pretty='format:%B%n${HASH_DELIMITER}%n%H${COMMIT_SEPARATOR}'`,
       range
     ].join(' '))
       .split(COMMIT_SEPARATOR)
-      .filter(line => {
-        return line;
-      });
+      .filter(line => line);
+  }
 
-    let commits = rawCommits.map(rawCommit => {
-      let commit = this.conventionalCommitsParser.sync(rawCommit, options);
+  _parseRawCommit(rawCommit, options = {}) {
+    let commit = this.conventionalCommitsParser.sync(rawCommit, options);
 
-      if (commit.header && commit.header.match('BREAKING') ||
-        commit.footer && commit.footer.match('BREAKING')) {
-        commit.breaking = true;
-      }
+    if (commit.header && commit.header.match('BREAKING') ||
+      commit.footer && commit.footer.match('BREAKING')) {
+      commit.breaking = true;
+    }
 
-      if (commit.hash) {
-        commit.shortHash = commit.hash.slice(0, 7);
-      }
+    if (commit.hash) {
+      commit.shortHash = commit.hash.slice(0, 7);
+    }
 
-      return commit;
-    });
+    return commit;
+  }
 
+  @memoize
+  conventionalCommits(fromSha, options = {}) {
+    let rawCommits = this.getRawCommits(fromSha);
+    let commits = rawCommits.map(
+      rawCommit => this._parseRawCommit(rawCommit, options)
+    );
     return this.conventionalCommitsFilter(commits);
   }
 }

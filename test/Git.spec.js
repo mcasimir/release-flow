@@ -3,21 +3,20 @@ import assert, {equal, deepEqual} from 'assert';
 import Git from '../src/Git';
 
 describe('Git', function() {
-  describe('remoteUrl', function() {
+  describe('getRemoteUrl', function() {
     it('gets remoteUrl based on the remoteName option', function() {
       let git = new Git({
         execCommand: spy(),
         remoteName: 'abc'
       });
 
-      // eslint-disable-next-line no-unused-expressions
-      git.remoteUrl;
+      git.getRemoteUrl();
 
       assert(git.execCommand.calledWith('git config --get remote.abc.url'));
     });
   });
 
-  describe('repoHttpUrl', function() {
+  describe('getRepoHttpUrl', function() {
     it('gets repoHttpUrl based on the remoteUrl', function() {
       let git = new Git({
         execCommand() {
@@ -26,7 +25,7 @@ describe('Git', function() {
         remoteName: 'abc'
       });
 
-      equal(git.repoHttpUrl, 'http://remoteurl.com');
+      equal(git.getRepoHttpUrl(), 'http://remoteurl.com');
     });
 
     it('returns options.repoHttpUrl if present', function() {
@@ -38,7 +37,7 @@ describe('Git', function() {
         repoHttpUrl: 'xyz'
       });
 
-      equal(git.repoHttpUrl, 'xyz');
+      equal(git.getRepoHttpUrl(), 'xyz');
     });
   });
 
@@ -82,7 +81,7 @@ describe('Git', function() {
         execCommand: spy()
       });
       spy(git, 'pushRef');
-      stub(git, 'currentBranch', () => {
+      stub(git, 'getCurrentBranch', () => {
         return 'xyz';
       });
 
@@ -158,13 +157,13 @@ describe('Git', function() {
     });
   });
 
-  describe('currentBranch', function() {
+  describe('getCurrentBranch', function() {
     it('calls git rev-parse --abbrev-ref HEAD', function() {
       let git = new Git({
         execCommand: spy()
       });
 
-      git.currentBranch();
+      git.getCurrentBranch();
 
       assert(git.execCommand.calledWith(
         'git rev-parse --abbrev-ref HEAD'
@@ -232,11 +231,11 @@ describe('Git', function() {
     });
   });
 
-  describe('parseTagHistoryLine', function() {
+  describe('_parseTagHistoryLine', function() {
     it('returns an object for a valid line', function() {
       let git = new Git();
 
-      deepEqual(git.parseTagHistoryLine(
+      deepEqual(git._parseTagHistoryLine(
         'd3963ed  (tag: refs/tags/v1.3.0) abc bcd'
       ), {
         name: 'v1.3.0',
@@ -343,23 +342,190 @@ describe('Git', function() {
     });
   });
 
-  describe('lastLocalTagSha', function() {
-
+  describe('getLastLocalTagSha', function() {
+    it('returns the last sha from getLocalTags', function() {
+      let git = new Git();
+      stub(git, 'getLocalTags').returns([
+        {name: 'v1.3.1', sha: '1'},
+        {name: 'v1.3.2', sha: '2'}
+      ]);
+      equal(git.getLastLocalTagSha(), '2');
+    });
   });
 
-  describe('lastTagName', function() {
-
+  describe('getLastLocalTagName', function() {
+    it('returns the last tag name from getLocalTags', function() {
+      let git = new Git();
+      stub(git, 'getLocalTags').returns([
+        {name: 'v1.3.1', sha: '1'},
+        {name: 'v1.3.2', sha: '2'}
+      ]);
+      equal(git.getLastLocalTagName(), 'v1.3.2');
+    });
   });
 
   describe('hasLocalTag', function() {
+    it('returns true if tag is present', function() {
+      let git = new Git();
+      stub(git, 'getLocalTags').returns([
+        {name: 'v1.3.1', sha: '1'}
+      ]);
+      equal(git.hasLocalTag('v1.3.1'), true);
+    });
 
+    it('returns false if tag is missing', function() {
+      let git = new Git();
+      stub(git, 'getLocalTags').returns([
+        {name: 'v1.3.1', sha: '1'}
+      ]);
+      equal(git.hasLocalTag('v1.3.2'), false);
+    });
   });
 
   describe('isCurrentBranch', function() {
+    it('returns true if branch matches', function() {
+      let git = new Git();
+      stub(git, 'getCurrentBranch').returns('foo');
+      equal(git.isCurrentBranch('foo'), true);
+    });
 
+    it('returns false if branch does not match', function() {
+      let git = new Git();
+      stub(git, 'getCurrentBranch').returns('foo');
+      equal(git.isCurrentBranch('bar'), false);
+    });
   });
 
-  describe('commits', function() {
+  describe('getRawCommits', function() {
+    it('calls execCommand with right argument', function() {
+      let git = new Git({
+        execCommand: stub().returns('')
+      });
 
+      git.getRawCommits('123');
+
+      assert(git.execCommand.calledWith(
+        'git --no-pager log ' +
+        '--pretty=\'format:%B%n-hash-%n%H[----COMMIT--END----]\' 123..'
+      ));
+    });
+  });
+
+  describe('_parseRawCommit', function() {
+    it('calls parser with raw commit', function() {
+      let git = new Git({
+        conventionalCommitsParser: {
+          sync: stub().returns({})
+        }
+      });
+
+      let commit = {a: 'xyz'};
+      let options = {b: 123};
+
+      git._parseRawCommit(commit, options);
+
+      assert(git.conventionalCommitsParser.sync
+        .calledWith(commit, options));
+    });
+
+    it('sets breaking if commit header matches BREAKING', function() {
+      let git = new Git({
+        conventionalCommitsParser: {
+          sync: stub().returns({
+            header: 'abc BREAKING bcd'
+          })
+        }
+      });
+
+      let commit = git._parseRawCommit({});
+
+      assert(commit.breaking);
+    });
+
+    it('sets breaking if commit footer matches BREAKING', function() {
+      let git = new Git({
+        conventionalCommitsParser: {
+          sync: stub().returns({
+            footer: 'abc BREAKING bcd'
+          })
+        }
+      });
+
+      let commit = git._parseRawCommit({});
+
+      assert(commit.breaking);
+    });
+
+    it('derives shortHash from hash', function() {
+      let git = new Git({
+        conventionalCommitsParser: {
+          sync: stub().returns({
+            hash: '1234567891011121314151617181920'
+          })
+        }
+      });
+
+      let commit = git._parseRawCommit({});
+
+      equal(commit.shortHash, '1234567');
+    });
+  });
+
+  describe('conventionalCommits', function() {
+    it('calls get rawCommits with provided sha', function() {
+      let git = new Git({
+        conventionalCommitsFilter: spy()
+      });
+
+      stub(git, 'getRawCommits').returns([]);
+      stub(git, '_parseRawCommit').returns({});
+
+      git.conventionalCommits('xyz', {});
+
+      assert(git.getRawCommits.calledWith('xyz'));
+    });
+
+    it('parses all the commits', function() {
+      let git = new Git({
+        conventionalCommitsFilter: spy()
+      });
+
+      stub(git, 'getRawCommits').returns([
+        {a: 1},
+        {b: 2}
+      ]);
+      stub(git, '_parseRawCommit').returns({});
+
+      git.conventionalCommits('xyz', {});
+
+      assert(git._parseRawCommit.calledWith({a: 1}));
+      assert(git._parseRawCommit.calledWith({b: 2}));
+    });
+
+    it('filters commits with conventionalCommitsFilter', function() {
+      let git = new Git({
+        conventionalCommitsFilter: spy()
+      });
+
+      stub(git, 'getRawCommits').returns([
+        {a: 1},
+        {b: 2}
+      ]);
+      stub(git, '_parseRawCommit').returns({a: 1});
+
+      git.conventionalCommits('xyz', {});
+
+      assert(git.conventionalCommitsFilter.calledWith([{a: 1}, {a: 1}]));
+    });
+
+    it('returns anything conventionalCommitsFilter returns', function() {
+      let git = new Git({
+        conventionalCommitsFilter: stub().returns(123)
+      });
+
+      stub(git, 'getRawCommits').returns([]);
+      stub(git, '_parseRawCommit');
+      equal(git.conventionalCommits(), 123);
+    });
   });
 });

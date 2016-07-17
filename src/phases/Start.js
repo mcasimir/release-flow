@@ -33,7 +33,7 @@ export default class Start extends Phase {
   getCommits(release) {
     let sha = release.git.lastLocalTagSha();
     release.logger.debug(`getting commits from ${sha}`);
-    release.commits = release.git.commits(sha);
+    release.commits = release.git.conventionalCommits(sha);
     release.logger.debug(`${release.commits.length} commits found`);
     if (!release.commits.length) {
       return Promise.reject(release.error('Nothing to release'));
