@@ -22,6 +22,7 @@ export default class DefaultLogger {
   constructor(options) {
     options = Object.assign({}, DEFAULT_OPTIONS, options);
     this.level = options.logLevel;
+    this.console = options.console || console;
   }
 
   error(message, metadata) {
@@ -42,9 +43,11 @@ export default class DefaultLogger {
 
   log(level, message, metadata) {
     if (LEVELS[this.level] >= LEVELS[level]) {
+      let openColor = chalk.styles[COLORS[level]].open;
+      let closeColor = chalk.styles[COLORS[level]].close;
+
       let args = [
-        chalk.styles[COLORS[level]].open + chalk.bold(`${level}:`),
-        `${message}` + chalk.styles[COLORS[level]].close,
+        openColor + chalk.bold(`${level}:`) + ` ${message}` + closeColor,
         metadata
       ];
 
@@ -52,8 +55,7 @@ export default class DefaultLogger {
         args.pop();
       }
 
-      // eslint-disable-next-line no-console
-      console.log.apply(console, args);
+      this.console.log(...args);
     }
   }
 }

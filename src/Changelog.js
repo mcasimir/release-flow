@@ -1,4 +1,4 @@
-import ChangelogEntry from 'ChangelogEntry';
+import ChangelogEntry from './ChangelogEntry';
 
 export default class Changelog extends ChangelogEntry {
   constructor(release) {

@@ -188,7 +188,6 @@ export default class Git {
     return commit;
   }
 
-  @memoize
   conventionalCommits(fromSha, options = {}) {
     let rawCommits = this.getRawCommits(fromSha);
     let commits = rawCommits.map(

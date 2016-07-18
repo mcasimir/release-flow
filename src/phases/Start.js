@@ -93,10 +93,9 @@ export default class Start extends Phase {
     let commits = release.commits;
     let changes = new Changelog(release);
 
-    changes.setSubjectLink(release.previous ?
+    changes.subjectLink = release.previous ?
       release.git.compareLink(release.previous, release.name) :
-      release.git.commitLink(release.name)
-    );
+      release.git.commitLink(release.name);
 
     let breaking = new changes.Entry('Breaking Changes');
     let features = new changes.Entry('Features');
@@ -120,7 +119,7 @@ export default class Start extends Phase {
         headersMap[commit.header] = change;
         if (commit.type === 'feat') {
           if (commit.scope) {
-            change.setScope(commit.scope);
+            change.scope = commit.scope;
           }
           change.addLink(
             commit.shortHash,
