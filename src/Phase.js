@@ -1,5 +1,4 @@
 import Sequence from './Sequence';
-export {default as Step} from './Step';
 
 export default class Phase {
   constructor() {
@@ -10,9 +9,9 @@ export default class Phase {
     this.steps.push(step);
   }
 
-  before(step, callback) {
-    let idx = this.steps.findIndex(function(fn) {
-      return fn.name === step;
+  before(stepName, callback) {
+    let idx = this.steps.findIndex(function(step) {
+      return step.name === stepName;
     });
 
     if (idx !== -1) {
@@ -20,7 +19,9 @@ export default class Phase {
     }
   }
 
-  run(args) {
-    return this.steps.run(args);
+  run(...args) {
+    return this.steps.run(...args);
   }
 }
+
+export {default as Step} from './Step';

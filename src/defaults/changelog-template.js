@@ -37,8 +37,10 @@ export default function(context) {
 
       lines.push(`${titleBullet}${scope}${subject}${links}`);
 
-      if (level !== 1 && !entry.isLeaf()) {
-        lines.push('');
+      if (!entry.isLeaf()) {
+        if (entry.children[0].isLeaf()) {
+          lines.push('');
+        }
       }
     },
     () => {

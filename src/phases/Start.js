@@ -1,7 +1,7 @@
 import semver from 'semver';
 import prependFile from 'prepend-file';
 import Phase, {Step} from '../Phase';
-import Changelog from '../Changelog';
+import ChangelogEntry from '../ChangelogEntry';
 
 export default class Start extends Phase {
   @Step()
@@ -91,15 +91,15 @@ export default class Start extends Phase {
   getChangelogEntries(release) {
     release.logger.debug('getting changelog entries');
     let commits = release.commits;
-    let changes = new Changelog(release);
+    let changes = new ChangelogEntry(release.name);
 
     changes.subjectLink = release.previous ?
       release.git.compareLink(release.previous, release.name) :
       release.git.commitLink(release.name);
 
-    let breaking = new changes.Entry('Breaking Changes');
-    let features = new changes.Entry('Features');
-    let fixes = new changes.Entry('Fixes');
+    let breaking = new ChangelogEntry('Breaking Changes');
+    let features = new ChangelogEntry('Features');
+    let fixes = new ChangelogEntry('Fixes');
 
     let headersMap = {};
 
@@ -115,7 +115,7 @@ export default class Start extends Phase {
           commit.type === 'fix' ||
           commit.breaking
       ) {
-        let change = new changes.Entry(commit.subject);
+        let change = new ChangelogEntry(commit.subject);
         headersMap[commit.header] = change;
         if (commit.type === 'feat') {
           if (commit.scope) {

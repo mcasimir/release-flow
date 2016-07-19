@@ -11,7 +11,7 @@ describe('Sequence', function() {
       seq.push(spy());
       seq.push(spy());
 
-      let [fn1, fn2, fn3] = seq._runnables;
+      let [fn1, fn2, fn3] = seq;
 
       await seq.run();
 
