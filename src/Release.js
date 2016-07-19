@@ -47,11 +47,10 @@ export default class Release {
     return this.phases.finish.run(this);
   }
 
-  full() {
-    return Promise.resolve()
-      .then(this.start.bind(this))
-      .then(this.publish.bind(this))
-      .then(this.finish.bind(this));
+  async full() {
+    await this.start();
+    await this.publish();
+    await this.finish();
   }
 
   error() {
