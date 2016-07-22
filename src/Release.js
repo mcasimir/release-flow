@@ -1,5 +1,3 @@
-import DefaultErrorFactory from './DefaultErrorFactory';
-import DefaultLogger from './DefaultLogger';
 import Git from './Git';
 import Start from './phases/Start';
 import Publish from './phases/Publish';
@@ -8,10 +6,7 @@ import defaults from './defaults';
 
 export default class Release {
 
-  static get plugins() {
-    this._plugins = this._plugins || {};
-    return this._plugins;
-  }
+  static plugins = {};
 
   static registerPlugin(name, fn) {
     this.plugins[name] = fn;
@@ -26,8 +21,8 @@ export default class Release {
       finish: new Finish()
     };
 
-    this.errorFactory = new DefaultErrorFactory();
-    this.logger = new DefaultLogger(options);
+    this.logger = new options.Logger({logLevel: options.logLevel});
+    this.errorFactory = new options.ErrorFactory();
     this.git = new Git(options);
 
     (options.plugins || []).forEach(plugin => {
@@ -53,8 +48,8 @@ export default class Release {
     await this.finish();
   }
 
-  error() {
-    return this.errorFactory.create.apply(this.errorFactory, arguments);
+  error(...args) {
+    return this.errorFactory.createError(...args);
   }
 
   plugin(fnOrString, options = {}) {
