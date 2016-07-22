@@ -1,5 +1,5 @@
 import assert from 'assert';
-import DefaultErrorFactory from '../src/DefaultErrorFactory';
+import DefaultErrorFactory from '../../src/defaults/DefaultErrorFactory';
 
 describe('DefaultErrorFactory', function() {
   describe('create', function() {

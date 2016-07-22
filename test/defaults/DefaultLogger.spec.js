@@ -1,6 +1,6 @@
 import {spy, stub} from 'sinon';
 import assert, {equal, deepEqual} from 'assert';
-import DefaultLogger from '../src/DefaultLogger';
+import DefaultLogger from '../../src/defaults/DefaultLogger';
 import {bold, red, yellow, white, gray} from 'chalk';
 
 describe('DefaultLogger', function() {

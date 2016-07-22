@@ -62,15 +62,13 @@ describe.only('Release', function() {
 
   describe('error', function() {
     it('invokes error factory', function() {
-      let release = new Release({
-        errorFactory: {
-          createError: stub()
-        }
-      });
+      let release = new Release();
+
+      stub(release.errorFactory, 'createError');
 
       release.error(1, 2, 3);
 
-      assert(release.errorFactory.calledWith(1, 2, 3));
+      assert(release.errorFactory.createError.calledWith(1, 2, 3));
     });
   });
 });
