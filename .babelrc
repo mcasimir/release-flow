@@ -16,7 +16,7 @@
   ],
   "env": {
     "test": {
-      "plugins": ["__coverage__"]
+      "plugins": [ "istanbul" ]
     }
   }
 }
