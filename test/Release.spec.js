@@ -2,7 +2,7 @@ import assert, {equal, deepEqual} from 'assert';
 import {stub} from 'sinon';
 import Release from '../src/Release';
 
-describe.only('Release', function() {
+describe('Release', function() {
   it('has plugins map', function() {
     deepEqual(Release.plugins, {});
   });
@@ -69,6 +69,48 @@ describe.only('Release', function() {
       release.error(1, 2, 3);
 
       assert(release.errorFactory.createError.calledWith(1, 2, 3));
+    });
+  });
+
+  describe('new Release()', function() {
+    it('attaches all the plugins', function() {
+      stub(Release.prototype, 'plugin');
+
+      let release = new Release({
+        plugins: ['x', 'y', 'z']
+      });
+
+      let stubbedMethod = release.plugin;
+
+      Release.prototype.plugin.restore();
+
+      assert(stubbedMethod.calledWith('x'));
+      assert(stubbedMethod.calledWith('y'));
+      assert(stubbedMethod.calledWith('z'));
+    });
+  });
+
+  describe('plugin', function() {
+    it('invokes anonymous plugins', function() {
+      let release = new Release();
+      let fn = stub();
+      release.plugin(fn);
+      assert(fn.calledWith(release));
+    });
+
+    it('invokes named plugins', function() {
+      let release = new Release();
+      let fn = stub();
+
+      let pluginsBackup = Release.plugins;
+      let modifiedPlugins = {};
+      Release.plugins = modifiedPlugins;
+      Release.registerPlugin('fn', fn);
+
+      release.plugin('fn');
+      Release.plugins = pluginsBackup;
+
+      assert(fn.calledWith(release));
     });
   });
 });

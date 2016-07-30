@@ -52,11 +52,11 @@ export default class Release {
     return this.errorFactory.createError(...args);
   }
 
-  plugin(fnOrString, options = {}) {
+  plugin(fnOrString) {
     if (typeof fnOrString === 'function') {
-      fnOrString(this, options);
+      fnOrString(this);
     } else {
-      Release.plugins[fnOrString](this, options);
+      Release.plugins[fnOrString](this);
     }
   }
 }
