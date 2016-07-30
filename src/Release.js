@@ -5,7 +5,6 @@ import Finish from './phases/Finish';
 import defaults from './defaults';
 
 export default class Release {
-
   static plugins = {};
 
   static registerPlugin(name, fn) {
@@ -25,9 +24,9 @@ export default class Release {
     this.errorFactory = new options.ErrorFactory();
     this.git = new Git(options);
 
-    (options.plugins || []).forEach(plugin => {
+    for (let plugin of options.plugins) {
       this.plugin(plugin);
-    });
+    }
   }
 
   start() {

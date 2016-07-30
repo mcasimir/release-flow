@@ -7,12 +7,12 @@ export default function execCommand(cmd, options = {}) {
 
   if (options.splitLines) {
     stdout = stdout.split('\n')
-    .map(function(line) {
-      return line.trim();
-    })
-    .filter(function(line) {
-      return line;
-    });
+      .map(function(line) {
+        return line.trim();
+      })
+      .filter(function(line) {
+        return line;
+      });
   }
 
   return stdout;

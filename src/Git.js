@@ -46,9 +46,9 @@ export default class Git {
 
   _remoteUrlToHttpUrl(remoteUrl) {
     return remoteUrl
-        .replace(/^[^@]*@/, '')
-        .replace(/:/g, '/')
-        .replace(/\.git$/, '');
+      .replace(/^[^@]*@/, '')
+      .replace(/:/g, '/')
+      .replace(/\.git$/, '');
   }
 
   openBranch(branchName) {
