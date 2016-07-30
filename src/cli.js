@@ -1,7 +1,10 @@
-'use strict';
+import 'babel-polyfill';
+import yargs from 'yargs';
+import {resolve} from 'path';
+import Release from './Release';
+import bumpPackageJson from './plugins/bump-package-json';
 
-let yargs = require('yargs');
-let resolve = require('path').resolve;
+bumpPackageJson(Release);
 
 let program = yargs
   .options({
@@ -39,7 +42,6 @@ if (argv.config) {
   }
 }
 
-let Release = require('..');
 let release = new Release(options);
 
 if (configLoadError) {
@@ -49,7 +51,7 @@ if (configLoadError) {
 
 let command = argv._[0];
 
-release[command].call(release)
+release[command](release)
   .catch(function(err) {
     release.logger.error(err.message);
     process.exit(1);

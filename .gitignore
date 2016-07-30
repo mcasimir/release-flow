@@ -108,3 +108,5 @@ uploads/*
 client/release
 
 /.sonar/
+
+.nyc_output/

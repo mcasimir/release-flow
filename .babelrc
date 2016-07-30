@@ -1,0 +1,22 @@
+{
+  "presets": [
+    "es2015",
+    "stage-0"
+  ],
+  "plugins": [
+    "transform-decorators-legacy",
+    "syntax-async-functions",
+    "transform-regenerator",
+    "transform-class-properties",
+    [
+      "babel-plugin-transform-builtin-extend", {
+        "globals": ["Error", "Array"]
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [ "istanbul" ]
+    }
+  }
+}
