@@ -17,21 +17,22 @@ export default class Start extends Phase {
   @Step()
   getPreviousVersion(release) {
     release.logger.debug('finding previous version');
-    let lastTagName = release.git.lastTagName();
+    let lastTagName = release.git.getLastLocalTagName();
     if (lastTagName) {
       let versionMatch = lastTagName.match(/\d\.\d\.\d.*/);
       release.previousVersion = versionMatch && versionMatch[0];
+      release.previousReleaseName =
+        `${release.options.tagPrefix}${release.previousVersion}`;
     } else {
       release.previousVersion = null;
+      release.previousReleaseName = null;
     }
-    release.previous = release.previousVersion &&
-      `${release.options.tagPrefix}${release.previousVersion}`;
     release.logger.debug(`previous version was ${release.previousVersion}`);
   }
 
   @Step()
   getCommits(release) {
-    let sha = release.git.lastLocalTagSha();
+    let sha = release.git.getLastLocalTagSha();
     release.logger.debug(`getting commits from ${sha}`);
     release.commits = release.git.conventionalCommits(sha);
     release.logger.debug(`${release.commits.length} commits found`);
@@ -53,14 +54,9 @@ export default class Start extends Phase {
       release.nextVersion = release.options.initialVersion;
     }
 
-    release.logger.debug(`next version will be ${release.nextVersion}`);
-  }
-
-  @Step()
-  getName(release) {
-    release.logger.debug('getting release name');
     release.name = `${release.options.tagPrefix}${release.nextVersion}`;
-    release.logger.debug(`release name is ${release.name}`);
+
+    release.logger.debug(`next version will be ${release.nextVersion}`);
   }
 
   @Step()
@@ -93,8 +89,8 @@ export default class Start extends Phase {
     let commits = release.commits;
     let changes = new ChangelogEntry(release.name);
 
-    changes.subjectLink = release.previous ?
-      release.git.compareLink(release.previous, release.name) :
+    changes.subjectLink = release.previousReleaseName ?
+      release.git.compareLink(release.previousReleaseName, release.name) :
       release.git.commitLink(release.name);
 
     let breaking = new ChangelogEntry('Breaking Changes');
