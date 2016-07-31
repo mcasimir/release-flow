@@ -42,7 +42,7 @@ describe('Git', function() {
   });
 
   describe('openBranch', function() {
-    it('runs git checkout on the passed branch', function() {
+    it('runs git checkout -b on the passed branch', function() {
       let git = new Git({
         execCommand: spy()
       });
@@ -50,6 +50,18 @@ describe('Git', function() {
       git.openBranch('abc');
 
       assert(git.execCommand.calledWith('git checkout -b abc'));
+    });
+  });
+
+  describe('checkout', function() {
+    it('runs git checkout on the passed branch', function() {
+      let git = new Git({
+        execCommand: spy()
+      });
+
+      git.checkout('abc');
+
+      assert(git.execCommand.calledWith('git checkout abc'));
     });
   });
 
@@ -393,6 +405,30 @@ describe('Git', function() {
       let git = new Git();
       stub(git, 'getCurrentBranch').returns('foo');
       equal(git.isCurrentBranch('bar'), false);
+    });
+  });
+
+  describe('merge', function() {
+    it('merges a local branch', function() {
+      let git = new Git({
+        execCommand: spy()
+      });
+
+      git.merge('xyz');
+
+      assert(git.execCommand.calledWith('git merge xyz'));
+    });
+  });
+
+  describe('tag', function() {
+    it('creates an anonymous tag', function() {
+      let git = new Git({
+        execCommand: spy()
+      });
+
+      git.tag('xyz');
+
+      assert(git.execCommand.calledWith('git tag xyz'));
     });
   });
 
