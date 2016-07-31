@@ -21,6 +21,7 @@ let program = yargs
   .locale('en')
   .usage('Usage: $0 <command> [options]')
   .command('start', 'Starts a release')
+  .command('publish', 'Push a release')
   .demand(1)
   .strict()
   .help()
