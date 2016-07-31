@@ -1,5 +1,6 @@
 import assert, {equal, deepEqual} from 'assert';
-import ChangelogEntry from '../src/ChangelogEntry';
+import ChangelogEntry from
+  '../../src/plugins/generate-changelog/ChangelogEntry';
 
 describe('ChangelogEntry', function() {
   describe('new ChangelogEntry()', function() {

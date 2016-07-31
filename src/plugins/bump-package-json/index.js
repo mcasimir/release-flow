@@ -3,7 +3,7 @@ import {resolve} from 'path';
 
 export default function installPlugin(release) {
   release.phases.start.before('commit', {
-    name: 'bump-package-json',
+    name: 'bumpPackageJson',
     run(context) {
       let packageJsonPath = resolve(process.cwd(), 'package.json');
       let packageJson = JSON.parse(readFileSync(packageJsonPath));
