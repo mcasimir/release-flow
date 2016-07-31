@@ -1,6 +1,6 @@
 {
   "name": "release-flow",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Git flow conventional releases",
   "main": "dist/Release.js",
   "scripts": {
@@ -13,7 +13,9 @@
     "cli": "npm run build && node ./lib/cli.js"
   },
   "pre-commit": {
-    "run": ["build"]
+    "run": [
+      "build"
+    ]
   },
   "bin": {
     "release-flow": "./lib/cli.js"

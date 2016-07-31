@@ -18,10 +18,12 @@ describe('changelog-template', function() {
 
     let changelog = changelogTemplate(context);
 
-    equal(changelog, '<a name="release1"></a>');
+    equal(changelog, `<a name="release1"></a>
+
+`);
   });
 
-  it('Adds bullet list entry for each top level leaf', function() {
+  it('Adds h1 entry for each top level leaf', function() {
     let root = new ChangelogEntry('root');
 
     let context = {
@@ -35,7 +37,9 @@ describe('changelog-template', function() {
 
     equal(changelog,
 `<a name="release1"></a>
-- root`);
+# root
+
+`);
   });
 
   it('Render subject for non leaf entries as title', function() {
@@ -55,7 +59,9 @@ describe('changelog-template', function() {
 `<a name="release1"></a>
 # root
 
-- child1`);
+- child1
+
+`);
   });
 
   it('Adds a space before >2nd level titles', function() {
@@ -80,7 +86,9 @@ describe('changelog-template', function() {
 
 ## child1
 
-- child2`);
+- child2
+
+`);
   });
 
   it('Does not add a space after leaf entries', function() {
@@ -108,7 +116,9 @@ describe('changelog-template', function() {
 ## child1
 
 - child2
-- child3`);
+- child3
+
+`);
   });
 
   it('renders one link', function() {
@@ -126,7 +136,9 @@ describe('changelog-template', function() {
 
     equal(changelog,
 `<a name="release1"></a>
-- root ([link 1](link-1-url))`);
+# root ([link 1](link-1-url))
+
+`);
   });
 
   it('renders two or more link comma separated', function() {
@@ -145,7 +157,9 @@ describe('changelog-template', function() {
 
     equal(changelog,
 `<a name="release1"></a>
-- root ([link 1](link-1-url), [link 2](link-2-url))`);
+# root ([link 1](link-1-url), [link 2](link-2-url))
+
+`);
   });
 
   it('renders scope in bold', function() {
@@ -163,7 +177,9 @@ describe('changelog-template', function() {
 
     equal(changelog,
 `<a name="release1"></a>
-- **feat** - root`);
+# **feat** - root
+
+`);
   });
 
   it('renders subject link', function() {
@@ -181,6 +197,8 @@ describe('changelog-template', function() {
 
     equal(changelog,
 `<a name="release1"></a>
-- [root](xyz)`);
+# [root](xyz)
+
+`);
   });
 });

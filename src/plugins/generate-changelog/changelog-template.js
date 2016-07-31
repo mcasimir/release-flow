@@ -12,7 +12,7 @@ export default function(context) {
       }
 
       let titleBullet = (
-          entry.isLeaf() ?
+          entry.isLeaf() && level !== 1 ?
             '-' :
             Array(level + 1).join('#')
       ) + ' ';
@@ -47,5 +47,5 @@ export default function(context) {
       level--;
     });
 
-  return lines.join('\n');
+  return lines.join('\n') + '\n\n';
 }
