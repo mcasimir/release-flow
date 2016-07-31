@@ -58,6 +58,22 @@ describe('Phase', function() {
     });
   });
 
+  describe('replace', function() {
+    it('replace the given step', function() {
+      let phase = new Phase();
+
+      phase.step({name: 'A'});
+      phase.step({name: 'B'});
+
+      phase.replace('B', {name: 'C'});
+
+      deepEqual(phase.steps, [
+        {name: 'A'},
+        {name: 'C'}
+      ]);
+    });
+  });
+
   describe('run', function() {
     it('calls steps run', function() {
       let phase = new Phase();
