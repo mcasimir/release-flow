@@ -1,4 +1,4 @@
-import assert, {fail, equal, deepEqual} from 'assert';
+import assert, {throws, doesNotThrow, fail, equal, deepEqual} from 'assert';
 import Start from '../../src/phases/Start';
 import {stub} from 'sinon';
 import Release from '../../src/Release';
@@ -19,12 +19,12 @@ describe('Start', function() {
       assert(this.release.git.fetchHeadsAndTags.called);
     });
 
-    it('breaks in case of error', async function() {
+    it('breaks in case of error', function() {
       stub(this.release.git, 'fetchHeadsAndTags').throws();
 
       let phase = new Start();
       try {
-        await phase.fetch(this.release);
+        phase.fetch(this.release);
         fail('Should not get here');
       } catch (e) {
         equal(e.message, 'Unable to fetch tags and heads');
@@ -86,13 +86,13 @@ describe('Start', function() {
       deepEqual(this.release.commits, ['123']);
     });
 
-    it('breaks release if no commits found', async function() {
+    it('breaks release if no commits found', function() {
       stub(this.release.git, 'getLastLocalTagSha');
       stub(this.release.git, 'conventionalCommits').returns([]);
 
       let phase = new Start();
       try {
-        await phase.getCommits(this.release);
+        phase.getCommits(this.release);
         fail('Should not get here');
       } catch (e) {
         equal(e.message, ('Nothing to release'));
@@ -145,26 +145,106 @@ describe('Start', function() {
   });
 
   describe('validate', function() {
+    it('throws if currentBranch is not developmentBranch', function() {
+      this.release.options.developmentBranch = 'abc';
 
+      stub(this.release.git, 'isCurrentBranch').returns(false);
+      let phase = new Start();
+
+      throws(() => {
+        phase.validate(this.release);
+      }, /Current branch should be abc$/);
+    });
+
+    it('does not throw if currentBranch is developmentBranch', function() {
+      this.release.options.developmentBranch = 'abc';
+
+      stub(this.release.git, 'hasUntrackedChanges');
+      stub(this.release.git, 'hasLocalTag');
+
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      let phase = new Start();
+
+      doesNotThrow(() => {
+        phase.validate(this.release);
+      }, /Current branch should be abc$/);
+    });
+
+    it('throws if hasUntrackedChanges', function() {
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(true);
+
+      let phase = new Start();
+
+      throws(() => {
+        phase.validate(this.release);
+      }, /You have untracked changes$/);
+    });
+
+    it('does not throw if has not hasUntrackedChanges', function() {
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasLocalTag');
+
+      let phase = new Start();
+
+      doesNotThrow(() => {
+        phase.validate(this.release);
+      }, /You have untracked changes$/);
+    });
+
+    it('throws if hasLocalTag with release name', function() {
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(true);
+
+      this.release.name = 'abc';
+
+      let phase = new Start();
+
+      throws(() => {
+        phase.validate(this.release);
+      }, /Tag abc already exists$/);
+    });
+
+    it('does not throw if has not LocalTag with release name', function() {
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(false);
+
+      this.release.name = 'abc';
+
+      let phase = new Start();
+
+      doesNotThrow(() => {
+        phase.validate(this.release);
+      }, /Tag abc already exists$/);
+    });
   });
 
   describe('openReleaseBranch', function() {
+    it('calls git.openBranch with the releaseBranchPrefix and nextVersion',
+      function() {
+        this.release.options.releaseBranchPrefix = 'xyz~';
+        this.release.nextVersion = '1.2.3';
+        stub(this.release.git, 'openBranch');
 
-  });
-
-  describe('getChangelogEntries', function() {
-
-  });
-
-  describe('generateChangelog', function() {
-
-  });
-
-  describe('writeChangelog', function() {
-
+        let phase = new Start();
+        phase.openReleaseBranch(this.release);
+        assert(this.release.git.openBranch.calledWith('xyz~1.2.3'));
+      });
   });
 
   describe('commit', function() {
+    it('invokes git commitAll with release message', function() {
+      this.release.name = 'xyz123';
 
+      stub(this.release.git, 'commitAll');
+
+      let phase = new Start();
+      phase.commit(this.release);
+
+      assert(this.release.git.commitAll.calledWith('Release xyz123'));
+    });
   });
 });

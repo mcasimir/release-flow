@@ -1,5 +1,7 @@
-import ChangelogEntry from '../../src/ChangelogEntry';
-import changelogTemplate from '../../src/defaults/changelog-template';
+import ChangelogEntry from
+  '../../src/plugins/generate-changelog/ChangelogEntry';
+import changelogTemplate from
+  '../../src/plugins/generate-changelog/changelog-template';
 
 import {equal} from 'assert';
 

@@ -1,6 +1,4 @@
-import {resolve} from 'path';
 import getBump from './get-bump';
-import changelogTemplate from './changelog-template';
 import DefaultErrorFactory from './DefaultErrorFactory';
 import DefaultLogger from './DefaultLogger';
 
@@ -15,9 +13,7 @@ export default {
   repoHttpUrl: null,
   ErrorFactory: DefaultErrorFactory,
   Logger: DefaultLogger,
-  changelogPath: resolve(process.cwd(), 'CHANGELOG.md'),
   repoHttpProtocol: 'https',
   getBump: getBump,
-  changelogTemplate: changelogTemplate,
   plugins: []
 };

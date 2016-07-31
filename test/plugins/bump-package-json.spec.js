@@ -32,7 +32,7 @@ describe('plugins', function() {
       });
 
       let step = release.phases.start.steps.find(
-        step => step.name === 'bump-package-json'
+        step => step.name === 'bumpPackageJson'
       );
 
       assert(step);
@@ -46,7 +46,7 @@ describe('plugins', function() {
       release.nextVersion = '1.2.3';
 
       let step = release.phases.start.steps.find(
-        step => step.name === 'bump-package-json'
+        step => step.name === 'bumpPackageJson'
       );
 
       step.run(release);
