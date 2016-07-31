@@ -3,8 +3,10 @@ import yargs from 'yargs';
 import {resolve} from 'path';
 import Release from './Release';
 import bumpPackageJson from './plugins/bump-package-json';
+import generateChangelog from './plugins/generate-changelog';
 
-bumpPackageJson(Release);
+Release.registerPlugin('bump-package-json', bumpPackageJson);
+Release.registerPlugin('generate-changelog', generateChangelog);
 
 let program = yargs
   .options({
