@@ -149,6 +149,10 @@ describe('Start', function() {
       this.release.options.developmentBranch = 'abc';
 
       stub(this.release.git, 'isCurrentBranch').returns(false);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(false);
+
       let phase = new Start();
 
       throws(() => {
@@ -159,10 +163,11 @@ describe('Start', function() {
     it('does not throw if currentBranch is developmentBranch', function() {
       this.release.options.developmentBranch = 'abc';
 
-      stub(this.release.git, 'hasUntrackedChanges');
-      stub(this.release.git, 'hasLocalTag');
-
       stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(false);
+
       let phase = new Start();
 
       doesNotThrow(() => {
@@ -171,8 +176,11 @@ describe('Start', function() {
     });
 
     it('throws if hasUntrackedChanges', function() {
+
       stub(this.release.git, 'isCurrentBranch').returns(true);
       stub(this.release.git, 'hasUntrackedChanges').returns(true);
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(false);
 
       let phase = new Start();
 
@@ -182,9 +190,11 @@ describe('Start', function() {
     });
 
     it('does not throw if has not hasUntrackedChanges', function() {
+
       stub(this.release.git, 'isCurrentBranch').returns(true);
       stub(this.release.git, 'hasUntrackedChanges').returns(false);
-      stub(this.release.git, 'hasLocalTag');
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(false);
 
       let phase = new Start();
 
@@ -193,9 +203,39 @@ describe('Start', function() {
       }, /You have untracked changes$/);
     });
 
-    it('throws if hasLocalTag with release name', function() {
+    it('throws if hasUnpushedCommits', function() {
+
       stub(this.release.git, 'isCurrentBranch').returns(true);
       stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasUnpushedCommits').returns(true);
+      stub(this.release.git, 'hasLocalTag').returns(false);
+
+      let phase = new Start();
+
+      throws(() => {
+        phase.validate(this.release);
+      }, /You have unpushed changes$/);
+    });
+
+    it('does not throw if has not hasUnpushedCommits', function() {
+
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
+      stub(this.release.git, 'hasLocalTag').returns(false);
+
+      let phase = new Start();
+
+      doesNotThrow(() => {
+        phase.validate(this.release);
+      }, /You have unpushed changes$/);
+    });
+
+    it('throws if hasLocalTag with release name', function() {
+
+      stub(this.release.git, 'isCurrentBranch').returns(true);
+      stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
       stub(this.release.git, 'hasLocalTag').returns(true);
 
       this.release.name = 'abc';
@@ -208,8 +248,10 @@ describe('Start', function() {
     });
 
     it('does not throw if has not LocalTag with release name', function() {
+
       stub(this.release.git, 'isCurrentBranch').returns(true);
       stub(this.release.git, 'hasUntrackedChanges').returns(false);
+      stub(this.release.git, 'hasUnpushedCommits').returns(false);
       stub(this.release.git, 'hasLocalTag').returns(false);
 
       this.release.name = 'abc';

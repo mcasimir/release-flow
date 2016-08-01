@@ -69,6 +69,10 @@ export default class Start extends Phase {
       throw release.error('You have untracked changes');
     }
 
+    if (release.git.hasUnpushedCommits(release.options.developmentBranch)) {
+      throw release.error('You have unpushed changes');
+    }
+
     if (release.git.hasLocalTag(release.name)) {
       throw release.error(`Tag ${release.name} already exists`);
     }
