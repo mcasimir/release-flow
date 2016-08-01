@@ -112,7 +112,11 @@ export default class Git {
   }
 
   hasUnpushedCommits() {
-    return Boolean(this.execCommand('git --no-pager cherry -v').length);
+    let refName = this.getCurrentBranch();
+    return Boolean(this.execCommand([
+      'git --no-pager cherry -v',
+      `${this.options.remoteName}/${refName} ${refName}`
+    ].join(' ')).length);
   }
 
   _parseTagHistoryLine(line) {

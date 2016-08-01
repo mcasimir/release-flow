@@ -219,10 +219,13 @@ describe('Git', function() {
         execCommand: stub().returns('')
       });
 
+      stub(git, 'getCurrentBranch').returns('b1');
+
+      git.options.remoteName = 'a';
       git.hasUnpushedCommits();
 
       assert(git.execCommand.calledWith(
-        'git --no-pager cherry -v'
+        'git --no-pager cherry -v a/b1 b1'
       ));
     });
 
