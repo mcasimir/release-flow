@@ -95,4 +95,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-.nyc_output/
+docs/
+src/

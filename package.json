@@ -10,7 +10,7 @@
     "lint": "eslint . --quiet",
     "clean": "rm -Rf ./lib",
     "build": "npm run clean && babel src -d lib",
-    "cli": "npm run build && node ./lib/cli.js"
+    "release": "node ./lib/cli.js"
   },
   "pre-commit": {
     "run": [
