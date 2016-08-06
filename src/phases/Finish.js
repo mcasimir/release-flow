@@ -67,8 +67,12 @@ export default class Finish extends Phase {
 
   @Step()
   mergeBackToDevelopment(release) {
-    release.git.checkout(release.options.developmentBranch);
-    release.git.merge(release.branchName);
-    release.git.pushRef(release.options.developmentBranch);
+    if (release.options.developmentBranch !==
+      release.options.productionBranch) {
+
+      release.git.checkout(release.options.developmentBranch);
+      release.git.merge(release.branchName);
+      release.git.pushRef(release.options.developmentBranch);
+    }
   }
 }

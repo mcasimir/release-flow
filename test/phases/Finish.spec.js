@@ -242,11 +242,12 @@ describe('Finish', function() {
   });
 
   describe('mergeBackToDevelopment', function() {
-    it('checks out developmentBranch', function() {
+    it('checks out developmentBranch if dev !== prod', function() {
       stub(this.release.git, 'checkout');
       stub(this.release.git, 'merge');
       stub(this.release.git, 'pushRef');
       this.release.options.developmentBranch = 'devxyz';
+      this.release.options.productionBranch = 'prodxyz';
 
       let phase = new Finish();
       phase.mergeBackToDevelopment(this.release);
@@ -254,10 +255,12 @@ describe('Finish', function() {
       assert(this.release.git.checkout.calledWith('devxyz'));
     });
 
-    it('merges from derived branchName', function() {
+    it('merges from derived branchName if dev !== prod', function() {
       stub(this.release.git, 'checkout');
       stub(this.release.git, 'merge');
       stub(this.release.git, 'pushRef');
+      this.release.options.developmentBranch = 'devxyz';
+      this.release.options.productionBranch = 'prodxyz';
       this.release.branchName = 'xyz';
 
       let phase = new Finish();
@@ -266,16 +269,33 @@ describe('Finish', function() {
       assert(this.release.git.merge.calledWith('xyz'));
     });
 
-    it('pushes productionBranch', function() {
+    it('pushes developmentBranch if dev !== prod', function() {
       stub(this.release.git, 'checkout');
       stub(this.release.git, 'merge');
       stub(this.release.git, 'pushRef');
-      this.release.options.developmentBranch = 'dev123';
+      this.release.options.developmentBranch = 'devxyz';
+      this.release.options.productionBranch = 'prodxyz';
 
       let phase = new Finish();
       phase.mergeBackToDevelopment(this.release);
 
-      assert(this.release.git.pushRef.calledWith('dev123'));
+      assert(this.release.git.pushRef.calledWith('devxyz'));
+    });
+
+    it('does not run checkout, merge and pushRef if dev == prod', function() {
+      stub(this.release.git, 'checkout');
+      stub(this.release.git, 'merge');
+      stub(this.release.git, 'pushRef');
+
+      this.release.options.developmentBranch = 'abc';
+      this.release.options.productionBranch = 'abc';
+
+      let phase = new Finish();
+      phase.mergeBackToDevelopment(this.release);
+
+      assert(!this.release.git.checkout.called);
+      assert(!this.release.git.merge.called);
+      assert(!this.release.git.pushRef.called);
     });
   });
 });
