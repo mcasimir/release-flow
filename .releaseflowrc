@@ -4,7 +4,7 @@ module.exports = {
   plugins: [
     'bump-package-json',
     'generate-changelog',
-    => {
+    function() {
       require('child_process').execSync(`npm run build`);
     }
   ]
