@@ -19,6 +19,16 @@ export default class Phase {
     }
   }
 
+  replace(stepName, callback) {
+    let idx = this.steps.findIndex(function(step) {
+      return step.name === stepName;
+    });
+
+    if (idx !== -1) {
+      this.steps.splice(idx, 1, callback);
+    }
+  }
+
   run(...args) {
     return this.steps.run(...args);
   }

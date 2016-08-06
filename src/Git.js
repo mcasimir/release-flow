@@ -55,6 +55,10 @@ export default class Git {
     this.execCommand(`git checkout -b ${branchName}`);
   }
 
+  checkout(branchName) {
+    this.execCommand(`git checkout ${branchName}`);
+  }
+
   commitAll(message) {
     this.execCommand('git add .');
     this.execCommand(`git commit -m '${message}'`);
@@ -66,6 +70,14 @@ export default class Git {
 
   pushRef(refName) {
     this.execCommand(`git push ${this.options.remoteName} ${refName}`);
+  }
+
+  tag(refName) {
+    this.execCommand(`git tag ${refName}`);
+  }
+
+  merge(refName) {
+    this.execCommand(`git merge ${refName}`);
   }
 
   link(path) {
@@ -100,7 +112,11 @@ export default class Git {
   }
 
   hasUnpushedCommits() {
-    return Boolean(this.execCommand('git --no-pager cherry -v').length);
+    let refName = this.getCurrentBranch();
+    return Boolean(this.execCommand([
+      'git --no-pager cherry -v',
+      `${this.options.remoteName}/${refName} ${refName}`
+    ].join(' ')).length);
   }
 
   _parseTagHistoryLine(line) {
