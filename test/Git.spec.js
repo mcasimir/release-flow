@@ -148,7 +148,7 @@ describe('Git', function() {
 
       equal(
         git.compareLink('xyz', 'abc'),
-        'http://abc.com/compare/xyz..abc'
+        'http://abc.com/compare/xyz...abc'
       );
     });
   });
