@@ -1,5 +1,5 @@
 <a name="v1.1.0"></a>
-# [v1.1.0](https://github.com/mcasimir/release-flow/compare/v1.0.1..v1.1.0)
+# [v1.1.0](https://github.com/mcasimir/release-flow/compare/v1.0.1...v1.1.0)
 
 ## Features
 
@@ -15,7 +15,7 @@
 - **git** - fix hasUnpushedChanges command ([7b32c97](https://github.com/mcasimir/release-flow/commits/7b32c979f333c269834d76f3af08ccd0812c3685))
 
 <a name="v1.0.1"></a>
-# [v1.0.1](https://github.com/mcasimir/release-flow/compare/v1.0.0..v1.0.1)
+# [v1.0.1](https://github.com/mcasimir/release-flow/compare/v1.0.0...v1.0.1)
 
 <a name="v1.0.0"></a>
 # [v1.0.0](https://github.com/mcasimir/release-flow/commits/v1.0.0)
