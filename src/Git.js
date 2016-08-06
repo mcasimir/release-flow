@@ -91,7 +91,7 @@ export default class Git {
   }
 
   compareLink(from, to) {
-    return this.link(`/compare/${from}..${to}`);
+    return this.link(`/compare/${from}...${to}`);
   }
 
   fetchHeadsAndTags() {
