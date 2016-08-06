@@ -13,7 +13,7 @@
 - Based on commit conventions
 - Complements perfectly with CI tools
 - Flexible branching model
-- Pluggable in design
+- Pluggable design
 - Completely configurable and customizable
 - Stand-alone (gulp/grunt integration is possible)
 - Suitable for any kind of project and language (small apps, opensource projects, libs, enterprise applications)
@@ -130,7 +130,7 @@ ie.
 
 #### Configuration
 
-`release-flow` loads a `releaseflowrc` file to allow configuration.
+`release-flow` loads a `releaseflowrc` javascript file to allow configuration.
 
 The following is an extract of the default configuration file:
 
@@ -199,7 +199,9 @@ module.exports = {
 
 Tiplcally a plugin adds some `step` to a release phase (one of start, publish or finish).
 
-A step is an object with a `name` and a `run()` function, to attach it to a phase its possible to use the `before` method:
+A step is an object with a `name` and a `run()` function. 
+
+To attach a step to a phase is possible to use array methods like `push` or `splice` on the `release.phases.[start/publish/finish].steps` array or use the `release.phases.[start/publish/finish].before` method to insert the step before another specific step:
 
 ``` js
 // releaseflowrc
