@@ -1,6 +1,6 @@
 {
   "name": "release-flow",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Git flow conventional releases",
   "main": "dist/Release.js",
   "scripts": {

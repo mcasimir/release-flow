@@ -1,3 +1,11 @@
+<a name="v1.1.1"></a>
+# [v1.1.1](https://github.com/mcasimir/release-flow/compare/v1.1.0...v1.1.1)
+
+## Fixes
+
+- fixes compare links ([4c63ed7](https://github.com/mcasimir/release-flow/commits/4c63ed75ba3dabbeb2ea3076285cda9869c48233))
+- fixes commit compare link ([5743558](https://github.com/mcasimir/release-flow/commits/574355890b0a8a2eb88f6f1f184af345c477eeb3))
+
 <a name="v1.1.0"></a>
 # [v1.1.0](https://github.com/mcasimir/release-flow/compare/v1.0.1...v1.1.0)
 
