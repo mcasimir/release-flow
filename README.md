@@ -4,12 +4,13 @@
 
 ## Git flow conventional releases
 
-`release-flow` leverages different best-practices to make release process safe and painless.
+`release-flow` is a command line tool that simplifies the developer side of software release process taking over tedious and error prone tasks.
+
+`release-flow` mixes [git flow releases](http://danielkummer.github.io/git-flow-cheatsheet/) with conventional commits to make release process safe and painless.
 
 ### Features
 
 - Based on commit conventions
-- Simplify the release process and management taking over tedious and error prone tasks
 - Complements perfectly with CI tools
 - Flexible branching model
 - Pluggable in design
@@ -44,7 +45,7 @@ In your `package.json`
 
 #### Start a release (from your development branch)
 
-```
+``` sh
 release-flow start
 ```
 
@@ -58,13 +59,13 @@ Effect:
 
 #### Publish a release (from the new release branch)
 
-```
+``` sh
 release-flow publish
 ```
 
 #### Finalize a release (from the release branch)
 
-```
+``` sh
 release-flow finish
 ```
 
@@ -83,7 +84,7 @@ simplified branching with just master.
 
 ##### Git flow model (default)
 
-```
+``` js
 // releaseflowrc
 module.exports = {
   developmentBranch: 'develop',
@@ -95,7 +96,7 @@ module.exports = {
 
 ##### Simplified model
 
-```
+``` js
 // releaseflowrc
 module.exports = {
   developmentBranch: 'master',
@@ -157,7 +158,7 @@ export default {
 
 Bumps package json version on start.
 
-```
+``` js
 // releaseflowrc
 module.exports = {
   plugins: [
