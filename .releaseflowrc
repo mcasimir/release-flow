@@ -3,6 +3,9 @@ module.exports = {
   developmentBranch: 'master',
   plugins: [
     'bump-package-json',
-    'generate-changelog'
+    'generate-changelog',
+    => {
+      require('child_process').execSync(`npm run build`);
+    }
   ]
 };
