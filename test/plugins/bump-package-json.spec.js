@@ -53,7 +53,8 @@ describe('plugins', function() {
 
       equal(this.writeFileSyncCalls[0][1], `{
   "version": "1.2.3"
-}`);
+}
+`);
     });
   });
 });
