@@ -11,7 +11,7 @@ export default function installPlugin(release) {
 
       writeFileSync(
         packageJsonPath,
-        JSON.stringify(packageJson, null, '  ')
+        JSON.stringify(packageJson, null, '  ') + '\n'
       );
     }
   });
