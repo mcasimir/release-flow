@@ -1,3 +1,14 @@
+<a name="v1.2.0"></a>
+# [v1.2.0](https://github.com/mcasimir/release-flow/compare/v1.1.1...v1.2.0)
+
+## Features
+
+- **cli** - allow full release command ([ffd0b60](https://github.com/mcasimir/release-flow/commits/ffd0b60eab22183e03df5990071e6d66fb65f995))
+
+## Fixes
+
+- **bump-package-json** - inserting newline at the end of file ([e35726e](https://github.com/mcasimir/release-flow/commits/e35726e4bb36c539920a663031701e160b74b94c), [6fc63ae](https://github.com/mcasimir/release-flow/commits/6fc63aef22c4209868f6314bbf1fb913477ef268))
+
 <a name="v1.1.1"></a>
 # [v1.1.1](https://github.com/mcasimir/release-flow/compare/v1.1.0...v1.1.1)
 
