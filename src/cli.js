@@ -20,9 +20,10 @@ let program = yargs
   })
   .locale('en')
   .usage('Usage: $0 <command> [options]')
-  .command('start', 'Starts a release')
+  .command('start', 'Start a release')
   .command('publish', 'Push a release')
   .command('finish', 'Finish a release')
+  .command('full', 'Perform the full release process at once')
   .demand(1)
   .strict()
   .help()
@@ -56,6 +57,9 @@ if (configLoadError) {
 let command = argv._[0];
 
 release[command](release)
+  .then(function() {
+    process.exit(0);
+  })
   .catch(function(err) {
     release.logger.error(err.message);
     process.exit(1);

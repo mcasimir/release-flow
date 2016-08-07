@@ -77,6 +77,18 @@ Effect:
 - Tags master after the release version
 - Merges back to development (if different from master)
 
+#### Start/Publish/Finish with one command (from your development branch)
+
+``` sh
+release-flow full
+```
+
+Effect:
+
+Same then issuing `release-flow start`, `release-flow publish` and `release-flow finish` in sequence.
+
+**NOTE:** This approach is especially suitable for libraries and small projects that does not require a QA phase on the release branch.
+
 #### Supported Branching model
 
 `release-flow` supports both the canonical `git-flow` branching model with develop/master and a
@@ -199,7 +211,7 @@ module.exports = {
 
 Tiplcally a plugin adds some `step` to a release phase (one of start, publish or finish).
 
-A step is an object with a `name` and a `run()` function. 
+A step is an object with a `name` and a `run()` function.
 
 To attach a step to a phase is possible to use array methods like `push` or `splice` on the `release.phases.[start/publish/finish].steps` array or use the `release.phases.[start/publish/finish].before` method to insert the step before another specific step:
 
@@ -214,11 +226,9 @@ module.exports = {
           console.log(release.version);
         }
       };
-      
+
       release.phases.start.before('commit', logVersion);
     }
   ]
 };
 ```
-
-
