@@ -41,6 +41,7 @@
     "yargs": "4.8.1"
   },
   "devDependencies": {
+    "babel-cli": "6.11.4",
     "babel-core": "6.11.4",
     "babel-eslint": "6.1.2",
     "babel-plugin-istanbul": "1.0.3",
