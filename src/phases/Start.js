@@ -17,7 +17,7 @@ export default class Start extends Phase {
     release.logger.debug('finding previous version');
     let lastTagName = release.git.getLastLocalTagName();
     if (lastTagName) {
-      let versionMatch = lastTagName.match(/\d\.\d\.\d.*/);
+      let versionMatch = lastTagName.match(/\d+\.\d+\.\d+.*/);
       release.previousVersion = versionMatch && versionMatch[0];
       release.previousReleaseName =
         `${release.options.tagPrefix}${release.previousVersion}`;
