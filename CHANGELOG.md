@@ -1,3 +1,11 @@
+<a name="v1.2.1"></a>
+# [v1.2.1](https://github.com/mcasimir/release-flow/compare/v1.2.0...v1.2.1)
+
+## Fixes
+
+- **phase** - fixed version regexp ([7f85c23](https://github.com/mcasimir/release-flow/commits/7f85c230d092c5b0a093acc4e175fe6c19e32178))
+- **cli** - added shabang on top of cli bin ([e54f38b](https://github.com/mcasimir/release-flow/commits/e54f38bd5d37829f81b67a7814ce2b9cad9d2f3c))
+
 <a name="v1.2.0"></a>
 # [v1.2.0](https://github.com/mcasimir/release-flow/compare/v1.1.1...v1.2.0)
 
