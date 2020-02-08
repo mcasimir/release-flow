@@ -145,7 +145,7 @@ export default class Git {
       });
 
     return tagHistory.sort((tag1, tag2) => {
-      return semverGt(tag1.name, tag2.name);
+      return semverGt(tag1.name, tag2.name) ? 1 : -1;
     });
   }
 
