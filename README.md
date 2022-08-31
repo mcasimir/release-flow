@@ -203,7 +203,7 @@ A plugin is just a function of the form `install(release) => null`. To register 
 module.exports = {
   plugins: [
     release => {
-      // ... do something    
+      // ... do something
     }
   ]
 };
@@ -232,3 +232,4 @@ module.exports = {
   ]
 };
 ```
+
