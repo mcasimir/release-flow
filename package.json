@@ -2,25 +2,23 @@
   "name": "release-flow",
   "version": "1.2.2",
   "description": "Git flow conventional releases",
-  "main": "dist/Release.js",
+  "main": "lib/Release.js",
   "engines": {
     "node": ">=12",
     "npm": ">=8"
   },
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "mocha -r ts-node/register 'test/**/*.spec.js'",
     "test-cov": "nyc npm run test",
     "check": "depcheck . && prettier --check . && eslint . --quiet",
     "reformat": "prettier --write .",
     "clean": "rm -Rf ./lib",
-    "build": "npm run clean && babel src -d lib",
     "release": "ts-node ./lib/cli.js",
-    "compile": "tsc -p tsconfig.json"
-  },
-  "pre-commit": {
-    "run": [
-      "build"
-    ]
+    "compile": "tsc -p tsconfig.json",
+    "prepare" : "npm run compile"
   },
   "bin": {
     "release-flow": "./lib/cli.js"
