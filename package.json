@@ -16,7 +16,7 @@
     "check": "depcheck . && prettier --check . && eslint . --quiet",
     "reformat": "prettier --write .",
     "clean": "rm -Rf ./lib",
-    "release": "ts-node ./lib/cli.js",
+    "release": "npm run compile && ts-node ./lib/cli.js full",
     "compile": "tsc -p tsconfig.json",
     "prepare": "npm run compile"
   },
