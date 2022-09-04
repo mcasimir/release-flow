@@ -3,6 +3,10 @@
   "version": "1.2.1",
   "description": "Git flow conventional releases",
   "main": "dist/Release.js",
+  "engines": {
+    "node": ">=12",
+    "npm": ">=8"
+  },
   "scripts": {
     "test:unit": "mocha --compilers js:babel-register --require babel-polyfill 'test/**/*.spec.js'",
     "test": "NODE_ENV=test nyc -r lcov -r text npm run test:unit",
