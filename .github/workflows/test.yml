@@ -27,7 +27,7 @@ jobs:
           cache: "npm"
       - run: npm i -g npm@8
       - run: npm ci
-      - run: npm check
+      - run: npm run check
       - run: npm test-cov
       - uses: codecov/codecov-action@v3
         if: ${{ matrix.node=='12.x' }}
