@@ -1,4 +1,4 @@
-import Sequence from './Sequence';
+import Sequence from "./Sequence";
 
 export default function Step(name) {
   return (target, methodName, descriptor) => {
@@ -7,7 +7,7 @@ export default function Step(name) {
 
     target.constructor.steps.push({
       name: stepName,
-      run: target[methodName].bind(target)
+      run: target[methodName].bind(target),
     });
 
     return descriptor;

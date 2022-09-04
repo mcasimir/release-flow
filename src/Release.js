@@ -1,8 +1,8 @@
-import Git from './Git';
-import Start from './phases/Start';
-import Publish from './phases/Publish';
-import Finish from './phases/Finish';
-import defaults from './defaults';
+import Git from "./Git";
+import Start from "./phases/Start";
+import Publish from "./phases/Publish";
+import Finish from "./phases/Finish";
+import defaults from "./defaults";
 
 export default class Release {
   static plugins = {};
@@ -17,10 +17,10 @@ export default class Release {
     this.phases = {
       start: new Start(),
       publish: new Publish(),
-      finish: new Finish()
+      finish: new Finish(),
     };
 
-    this.logger = new options.Logger({logLevel: options.logLevel});
+    this.logger = new options.Logger({ logLevel: options.logLevel });
     this.errorFactory = new options.ErrorFactory();
     this.git = new Git(options);
 
@@ -52,7 +52,7 @@ export default class Release {
   }
 
   plugin(fnOrString) {
-    if (typeof fnOrString === 'function') {
+    if (typeof fnOrString === "function") {
       fnOrString(this);
     } else {
       Release.plugins[fnOrString](this);

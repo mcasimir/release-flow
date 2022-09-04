@@ -20,7 +20,7 @@ describe("execCommand", function () {
     ]);
   });
 
-  afterEach(() => {
+  afterEach(function () {
     if (childProcess.execSync.restore) {
       childProcess.execSync.restore();
     }

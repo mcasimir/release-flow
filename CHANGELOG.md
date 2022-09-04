@@ -1,4 +1,5 @@
 <a name="v1.2.1"></a>
+
 # [v1.2.1](https://github.com/mcasimir/release-flow/compare/v1.2.0...v1.2.1)
 
 ## Fixes
@@ -7,6 +8,7 @@
 - **cli** - added shabang on top of cli bin ([e54f38b](https://github.com/mcasimir/release-flow/commits/e54f38bd5d37829f81b67a7814ce2b9cad9d2f3c))
 
 <a name="v1.2.0"></a>
+
 # [v1.2.0](https://github.com/mcasimir/release-flow/compare/v1.1.1...v1.2.0)
 
 ## Features
@@ -18,6 +20,7 @@
 - **bump-package-json** - inserting newline at the end of file ([e35726e](https://github.com/mcasimir/release-flow/commits/e35726e4bb36c539920a663031701e160b74b94c), [6fc63ae](https://github.com/mcasimir/release-flow/commits/6fc63aef22c4209868f6314bbf1fb913477ef268))
 
 <a name="v1.1.1"></a>
+
 # [v1.1.1](https://github.com/mcasimir/release-flow/compare/v1.1.0...v1.1.1)
 
 ## Fixes
@@ -26,6 +29,7 @@
 - fixes commit compare link ([5743558](https://github.com/mcasimir/release-flow/commits/574355890b0a8a2eb88f6f1f184af345c477eeb3))
 
 <a name="v1.1.0"></a>
+
 # [v1.1.0](https://github.com/mcasimir/release-flow/compare/v1.0.1...v1.1.0)
 
 ## Features
@@ -42,15 +46,17 @@
 - **git** - fix hasUnpushedChanges command ([7b32c97](https://github.com/mcasimir/release-flow/commits/7b32c979f333c269834d76f3af08ccd0812c3685))
 
 <a name="v1.0.1"></a>
+
 # [v1.0.1](https://github.com/mcasimir/release-flow/compare/v1.0.0...v1.0.1)
 
 <a name="v1.0.0"></a>
+
 # [v1.0.0](https://github.com/mcasimir/release-flow/commits/v1.0.0)
 
 ## Features
 
 - open release branch ([54e859f](https://github.com/mcasimir/release-flow/commits/54e859f))
-- plugins interface   ([f214e89](https://github.com/mcasimir/release-flow/commits/f214e89))
+- plugins interface ([f214e89](https://github.com/mcasimir/release-flow/commits/f214e89))
 - added cli ([24582bc](https://github.com/mcasimir/release-flow/commits/24582bc))
 - squash commits with same message in changelog ([1aac643](https://github.com/mcasimir/release-flow/commits/1aac643))
 - generate changelog ([4ed812c](https://github.com/mcasimir/release-flow/commits/4ed812c))

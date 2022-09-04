@@ -1,28 +1,26 @@
-import memoize from 'memoize-decorator';
-import conventionalCommitsFilter from 'conventional-commits-filter';
-import conventionalCommitsParser from 'conventional-commits-parser';
-import execCommand from './execCommand';
-import {valid as semverValid, compare as semverCompare} from 'semver';
+import memoize from "memoize-decorator";
+import conventionalCommitsFilter from "conventional-commits-filter";
+import conventionalCommitsParser from "conventional-commits-parser";
+import execCommand from "./execCommand";
+import { valid as semverValid, compare as semverCompare } from "semver";
 
-const COMMIT_SEPARATOR = '[----COMMIT--END----]';
-const HASH_DELIMITER = '-hash-';
+const COMMIT_SEPARATOR = "[----COMMIT--END----]";
+const HASH_DELIMITER = "-hash-";
 const GIT_DEFAULT_OPTIONS = {
-  remoteName: 'origin',
-  repoHttpProtocol: 'http'
+  remoteName: "origin",
+  repoHttpProtocol: "http",
 };
 
-const TAG_HISTORY_RE = /^([0-9a-f]{5,40})\s+\(tag: refs\/tags\/([^,\)]+)/;
+const TAG_HISTORY_RE = /^([0-9a-f]{5,40})\s+\(tag: refs\/tags\/([^,)]+)/;
 
 export default class Git {
-
   constructor(options = {}) {
     this.options = Object.assign(GIT_DEFAULT_OPTIONS, options);
-    this.conventionalCommitsFilter = options.conventionalCommitsFilter ||
-      conventionalCommitsFilter;
-    this.conventionalCommitsParser = options.conventionalCommitsParser ||
-      conventionalCommitsParser;
-    this.execCommand = options.execCommand ||
-      execCommand;
+    this.conventionalCommitsFilter =
+      options.conventionalCommitsFilter || conventionalCommitsFilter;
+    this.conventionalCommitsParser =
+      options.conventionalCommitsParser || conventionalCommitsParser;
+    this.execCommand = options.execCommand || execCommand;
   }
 
   @memoize
@@ -46,9 +44,9 @@ export default class Git {
 
   _remoteUrlToHttpUrl(remoteUrl) {
     return remoteUrl
-      .replace(/^[^@]*@/, '')
-      .replace(/:/g, '/')
-      .replace(/\.git$/, '');
+      .replace(/^[^@]*@/, "")
+      .replace(/:/g, "/")
+      .replace(/\.git$/, "");
   }
 
   openBranch(branchName) {
@@ -60,7 +58,7 @@ export default class Git {
   }
 
   commitAll(message) {
-    this.execCommand('git add .');
+    this.execCommand("git add .");
     this.execCommand(`git commit -m '${message}'`);
   }
 
@@ -81,9 +79,9 @@ export default class Git {
   }
 
   link(path) {
-    path = (path || '').replace(/^\//, '');
-    let base = this.getRepoHttpUrl().replace(/\/$/, '');
-    return base + '/' + path;
+    path = (path || "").replace(/^\//, "");
+    let base = this.getRepoHttpUrl().replace(/\/$/, "");
+    return base + "/" + path;
   }
 
   commitLink(commit) {
@@ -95,28 +93,34 @@ export default class Git {
   }
 
   fetchHeadsAndTags() {
-    return this.execCommand([
-      'git fetch',
-      this.options.remoteName,
-      `refs/heads/*:refs/remotes/${this.options.remoteName}/*`,
-      '+refs/tags/*:refs/tags/*'
-    ].join(' '));
+    return this.execCommand(
+      [
+        "git fetch",
+        this.options.remoteName,
+        `refs/heads/*:refs/remotes/${this.options.remoteName}/*`,
+        "+refs/tags/*:refs/tags/*",
+      ].join(" ")
+    );
   }
 
   getCurrentBranch() {
-    return this.execCommand('git rev-parse --abbrev-ref HEAD');
+    return this.execCommand("git rev-parse --abbrev-ref HEAD");
   }
 
   hasUntrackedChanges() {
-    return Boolean(this.execCommand('git status --porcelain').length);
+    return Boolean(this.execCommand("git status --porcelain").length);
   }
 
   hasUnpushedCommits() {
     let refName = this.getCurrentBranch();
-    return Boolean(this.execCommand([
-      'git --no-pager cherry -v',
-      `${this.options.remoteName}/${refName} ${refName}`
-    ].join(' ')).length);
+    return Boolean(
+      this.execCommand(
+        [
+          "git --no-pager cherry -v",
+          `${this.options.remoteName}/${refName} ${refName}`,
+        ].join(" ")
+      ).length
+    );
   }
 
   _parseTagHistoryLine(line) {
@@ -124,7 +128,7 @@ export default class Git {
     if (tagMatch) {
       return {
         sha: tagMatch[1],
-        name: tagMatch[2]
+        name: tagMatch[2],
       };
     }
   }
@@ -132,15 +136,16 @@ export default class Git {
   @memoize
   getLocalTags() {
     let tagHistory = this.execCommand(
-        'git log --no-walk --tags --pretty="%h %d %s" --decorate=full'
-      , {
-        splitLines: true
-      })
-      .map(line => {
+      'git log --no-walk --tags --pretty="%h %d %s" --decorate=full',
+      {
+        splitLines: true,
+      }
+    )
+      .map((line) => {
         return this._parseTagHistoryLine(line);
       })
-      .filter(line => line)
-      .filter(tag => {
+      .filter((line) => line)
+      .filter((tag) => {
         return semverValid(tag.name);
       });
 
@@ -168,7 +173,7 @@ export default class Git {
   }
 
   hasLocalTag(tagName) {
-    let found = this.getLocalTags().find(tag => {
+    let found = this.getLocalTags().find((tag) => {
       return tag.name === tagName;
     });
     return Boolean(found);
@@ -179,21 +184,25 @@ export default class Git {
   }
 
   getRawCommits(fromSha) {
-    let range = fromSha ? `${fromSha}..` : '';
-    return this.execCommand([
-      'git --no-pager log',
-      `--pretty='format:%B%n${HASH_DELIMITER}%n%H${COMMIT_SEPARATOR}'`,
-      range
-    ].join(' '))
+    let range = fromSha ? `${fromSha}..` : "";
+    return this.execCommand(
+      [
+        "git --no-pager log",
+        `--pretty='format:%B%n${HASH_DELIMITER}%n%H${COMMIT_SEPARATOR}'`,
+        range,
+      ].join(" ")
+    )
       .split(COMMIT_SEPARATOR)
-      .filter(line => line);
+      .filter((line) => line);
   }
 
   _parseRawCommit(rawCommit, options = {}) {
     let commit = this.conventionalCommitsParser.sync(rawCommit, options);
 
-    if (commit.header && commit.header.match('BREAKING') ||
-      commit.footer && commit.footer.match('BREAKING')) {
+    if (
+      (commit.header && commit.header.match("BREAKING")) ||
+      (commit.footer && commit.footer.match("BREAKING"))
+    ) {
       commit.breaking = true;
     }
 
@@ -206,8 +215,8 @@ export default class Git {
 
   conventionalCommits(fromSha, options = {}) {
     let rawCommits = this.getRawCommits(fromSha);
-    let commits = rawCommits.map(
-      rawCommit => this._parseRawCommit(rawCommit, options)
+    let commits = rawCommits.map((rawCommit) =>
+      this._parseRawCommit(rawCommit, options)
     );
     return this.conventionalCommitsFilter(commits);
   }

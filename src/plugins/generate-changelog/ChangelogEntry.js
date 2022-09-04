@@ -8,7 +8,7 @@ export default class ChangelogEntry {
   }
 
   addLink(name, url) {
-    this.links.push({name: name, url: url});
+    this.links.push({ name: name, url: url });
   }
 
   addChild(child) {

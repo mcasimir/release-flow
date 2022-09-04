@@ -23,19 +23,19 @@
 
 Globally (use from console)
 
-``` sh
+```sh
 npm i -g release-flow
 ```
 
 As project dependency (use through npm script or programmatically)
 
-``` sh
+```sh
 npm i --save-dev release-flow
 ```
 
 In your `package.json`
 
-``` json
+```json
 "scripts": {
   "release": "release-flow"
 }
@@ -45,7 +45,7 @@ In your `package.json`
 
 #### Start a release (from your development branch)
 
-``` sh
+```sh
 release-flow start
 ```
 
@@ -59,13 +59,13 @@ Effect:
 
 #### Publish a release (from the new release branch)
 
-``` sh
+```sh
 release-flow publish
 ```
 
 #### Finalize a release (from the release branch)
 
-``` sh
+```sh
 release-flow finish
 ```
 
@@ -79,7 +79,7 @@ Effect:
 
 #### Start/Publish/Finish with one command (from your development branch)
 
-``` sh
+```sh
 release-flow full
 ```
 
@@ -96,11 +96,11 @@ simplified branching with just master.
 
 ##### Git flow model (default)
 
-``` js
+```js
 // releaseflowrc
 module.exports = {
-  developmentBranch: 'develop',
-  productionBranch: 'master'
+  developmentBranch: "develop",
+  productionBranch: "master",
 };
 ```
 
@@ -108,11 +108,11 @@ module.exports = {
 
 ##### Simplified model
 
-``` js
+```js
 // releaseflowrc
 module.exports = {
-  developmentBranch: 'master',
-  productionBranch: 'master'
+  developmentBranch: "master",
+  productionBranch: "master",
 };
 ```
 
@@ -146,21 +146,21 @@ ie.
 
 The following is an extract of the default configuration file:
 
-``` js
+```js
 export default {
-  developmentBranch: 'develop',
-  productionBranch: 'master',
-  releaseBranchPrefix: 'release/',
-  tagPrefix: 'v',
-  remoteName: 'origin',
-  logLevel: 'info',
-  initialVersion: '1.0.0',
+  developmentBranch: "develop",
+  productionBranch: "master",
+  releaseBranchPrefix: "release/",
+  tagPrefix: "v",
+  remoteName: "origin",
+  logLevel: "info",
+  initialVersion: "1.0.0",
   repoHttpUrl: null,
   ErrorFactory: DefaultErrorFactory,
   Logger: DefaultLogger,
-  repoHttpProtocol: 'https',
+  repoHttpProtocol: "https",
   getBump: getBump,
-  plugins: []
+  plugins: [],
 };
 ```
 
@@ -170,12 +170,10 @@ export default {
 
 Bumps package json version on start.
 
-``` js
+```js
 // releaseflowrc
 module.exports = {
-  plugins: [
-    'bump-package-json'
-  ]
+  plugins: ["bump-package-json"],
 };
 ```
 
@@ -183,7 +181,7 @@ module.exports = {
 
 Generates a changelog for the release and prepend it `CHANGELOG.md` or the choosen path on start.
 
-``` js
+```js
 // releaseflowrc
 module.exports = {
   changelogPath: 'CHANGELOG.md'
@@ -198,14 +196,14 @@ module.exports = {
 
 A plugin is just a function of the form `install(release) => null`. To register it is enough to pass it in releaseflowrc
 
-``` js
+```js
 // releaseflowrc
 module.exports = {
   plugins: [
-    release => {
-      // ... do something    
-    }
-  ]
+    (release) => {
+      // ... do something
+    },
+  ],
 };
 ```
 
@@ -215,20 +213,20 @@ A step is an object with a `name` and a `run()` function.
 
 To attach a step to a phase is possible to use array methods like `push` or `splice` on the `release.phases.[start/publish/finish].steps` array or use the `release.phases.[start/publish/finish].before` method to insert the step before another specific step:
 
-``` js
+```js
 // releaseflowrc
 module.exports = {
   plugins: [
-    release => {
+    (release) => {
       let logVersion = {
-        name: 'logVersion',
+        name: "logVersion",
         run(release) {
           console.log(release.version);
-        }
+        },
       };
 
-      release.phases.start.before('commit', logVersion);
-    }
-  ]
+      release.phases.start.before("commit", logVersion);
+    },
+  ],
 };
 ```
