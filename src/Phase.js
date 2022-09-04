@@ -1,4 +1,4 @@
-import Sequence from './Sequence';
+import Sequence from "./Sequence";
 
 export default class Phase {
   constructor() {
@@ -10,7 +10,7 @@ export default class Phase {
   }
 
   before(stepName, callback) {
-    let idx = this.steps.findIndex(function(step) {
+    let idx = this.steps.findIndex(function (step) {
       return step.name === stepName;
     });
 
@@ -20,7 +20,7 @@ export default class Phase {
   }
 
   replace(stepName, callback) {
-    let idx = this.steps.findIndex(function(step) {
+    let idx = this.steps.findIndex(function (step) {
       return step.name === stepName;
     });
 
@@ -34,4 +34,4 @@ export default class Phase {
   }
 }
 
-export {default as Step} from './Step';
+export { default as Step } from "./Step";

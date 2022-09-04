@@ -1,21 +1,21 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 
 const LEVELS = {
   error: 0,
   warn: 1,
   info: 2,
-  debug: 3
+  debug: 3,
 };
 
 const COLORS = {
-  error: 'red',
-  warn: 'yellow',
-  info: 'white',
-  debug: 'gray'
+  error: "red",
+  warn: "yellow",
+  info: "white",
+  debug: "gray",
 };
 
 const DEFAULT_OPTIONS = {
-  logLevel: 'info'
+  logLevel: "info",
 };
 
 export default class DefaultLogger {
@@ -26,19 +26,19 @@ export default class DefaultLogger {
   }
 
   error(message, metadata) {
-    this.log('error', message, metadata);
+    this.log("error", message, metadata);
   }
 
   warn(message, metadata) {
-    this.log('warn', message, metadata);
+    this.log("warn", message, metadata);
   }
 
   info(message, metadata) {
-    this.log('info', message, metadata);
+    this.log("info", message, metadata);
   }
 
   debug(message, metadata) {
-    this.log('debug', message, metadata);
+    this.log("debug", message, metadata);
   }
 
   log(level, message, metadata) {
@@ -48,7 +48,7 @@ export default class DefaultLogger {
 
       let args = [
         openColor + chalk.bold(`${level}:`) + ` ${message}` + closeColor,
-        metadata
+        metadata,
       ];
 
       if (metadata === null || metadata === undefined) {

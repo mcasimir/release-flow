@@ -1,27 +1,27 @@
-export default function(context) {
+export default function (context) {
   let release = context.release;
   let lines = [`<a name="${release.name}"></a>`];
   let level = 0;
 
   release.changes.traverse(
-    entry => {
+    (entry) => {
       level++;
 
       if (level !== 1 && !entry.isLeaf()) {
-        lines.push('');
+        lines.push("");
       }
 
-      let titleBullet = (
-          entry.isLeaf() && level !== 1 ?
-            '-' :
-            Array(level + 1).join('#')
-      ) + ' ';
+      let titleBullet =
+        (entry.isLeaf() && level !== 1 ? "-" : Array(level + 1).join("#")) +
+        " ";
 
       let subject = entry.subject;
-      let scope = entry.scope || '';
-      let links = entry.links.map(function(link) {
-        return `[${link.name}](${link.url})`;
-      }).join(', ');
+      let scope = entry.scope || "";
+      let links = entry.links
+        .map(function (link) {
+          return `[${link.name}](${link.url})`;
+        })
+        .join(", ");
 
       if (scope) {
         scope = `**${scope}** - `;
@@ -39,13 +39,14 @@ export default function(context) {
 
       if (!entry.isLeaf()) {
         if (entry.children[0].isLeaf()) {
-          lines.push('');
+          lines.push("");
         }
       }
     },
     () => {
       level--;
-    });
+    }
+  );
 
-  return lines.join('\n') + '\n\n';
+  return lines.join("\n") + "\n\n";
 }

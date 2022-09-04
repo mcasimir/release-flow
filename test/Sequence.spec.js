@@ -1,10 +1,10 @@
-import {spy} from 'sinon';
-import assert from 'assert';
-import Sequence from '../src/Sequence';
+import { spy } from "sinon";
+import assert from "assert";
+import Sequence from "../src/Sequence";
 
-describe('Sequence', function() {
-  describe('run', function() {
-    it('calls all the functions', async function() {
+describe("Sequence", function () {
+  describe("run", function () {
+    it("calls all the functions", async function () {
       let seq = new Sequence();
 
       seq.push(spy());
@@ -20,12 +20,12 @@ describe('Sequence', function() {
       assert(fn3.called);
     });
 
-    it('works with runnables', async function() {
+    it("works with runnables", async function () {
       let seq = new Sequence();
 
-      let runnable1 = {run: spy()};
-      let runnable2 = {run: spy()};
-      let runnable3 = {run: spy()};
+      let runnable1 = { run: spy() };
+      let runnable2 = { run: spy() };
+      let runnable3 = { run: spy() };
 
       seq.push(runnable1);
       seq.push(runnable2);
@@ -38,18 +38,18 @@ describe('Sequence', function() {
       assert(runnable3.run.called);
     });
 
-    it('rejects if one of the runnables throws', async function() {
+    it("rejects if one of the runnables throws", async function () {
       let seq = new Sequence();
-      let err = new Error('success');
+      let err = new Error("success");
       seq.push(() => {
         throw err;
       });
 
       try {
         await seq.run();
-        assert.fail('seq.run was expected to throw');
+        assert.fail("seq.run was expected to throw");
       } catch (e) {
-        if (e.message !== 'success') {
+        if (e.message !== "success") {
           throw e;
         }
       }

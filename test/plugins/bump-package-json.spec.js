@@ -1,60 +1,44 @@
-import mock from 'mock-require';
-import Release from '../../src/Release';
-import assert, {equal} from 'assert';
+import fs from "fs";
+import assert, { equal } from "assert";
+import Release from "../../src/Release";
+import plugin from "../../src/plugins/bump-package-json";
 
-describe('plugins', function() {
-  describe('bumpPackageJson', function() {
-
-    beforeEach(function() {
-      this.writeFileSyncCalls = [];
-
-      mock('fs', {
-        writeFileSync: (path, data) => {
-          this.writeFileSyncCalls.push([path, data]);
-        },
-        readFileSync: function() {
-          return '{}';
-        }
-      });
-
-      this.bumpPackageJson = mock.reRequire(
-        '../../src/plugins/bump-package-json'
-      ).default;
+describe("plugins", function () {
+  describe("bumpPackageJson", function () {
+    beforeEach(function () {
+      fs.renameSync("package.json", "package.json.bkp");
+      fs.writeFileSync("package.json", "{}");
     });
-
-    afterEach(function() {
-      mock.stopAll();
+    afterEach(function () {
+      fs.unlinkSync("package.json");
+      fs.renameSync("package.json.bkp", "package.json");
     });
-
-    it('installs a step', function() {
+    it("installs a step", function () {
       let release = new Release({
-        plugins: [this.bumpPackageJson]
+        plugins: [plugin],
       });
-
       let step = release.phases.start.steps.find(
-        step => step.name === 'bumpPackageJson'
+        (step) => step.name === "bumpPackageJson"
       );
-
       assert(step);
     });
-
-    it('writes nextVersion on package json', function() {
+    it("writes nextVersion on package json", function () {
       let release = new Release({
-        plugins: [this.bumpPackageJson]
+        plugins: [plugin],
       });
-
-      release.nextVersion = '1.2.3';
-
+      release.nextVersion = "1.2.3";
       let step = release.phases.start.steps.find(
-        step => step.name === 'bumpPackageJson'
+        (step) => step.name === "bumpPackageJson"
       );
-
       step.run(release);
-
-      equal(this.writeFileSyncCalls[0][1], `{
+      const packageJson = fs.readFileSync("package.json", "utf-8");
+      equal(
+        packageJson,
+        `{
   "version": "1.2.3"
 }
-`);
+`
+      );
     });
   });
 });
