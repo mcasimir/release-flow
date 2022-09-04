@@ -2,7 +2,7 @@ import memoize from 'memoize-decorator';
 import conventionalCommitsFilter from 'conventional-commits-filter';
 import conventionalCommitsParser from 'conventional-commits-parser';
 import execCommand from './execCommand';
-import {gt as semverGt, valid as semverValid} from 'semver';
+import {valid as semverValid, compare as semverCompare} from 'semver';
 
 const COMMIT_SEPARATOR = '[----COMMIT--END----]';
 const HASH_DELIMITER = '-hash-';
@@ -145,7 +145,7 @@ export default class Git {
       });
 
     return tagHistory.sort((tag1, tag2) => {
-      return semverGt(tag1.name, tag2.name);
+      return semverCompare(tag1.name, tag2.name);
     });
   }
 
