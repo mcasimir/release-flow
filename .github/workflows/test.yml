@@ -30,4 +30,3 @@ jobs:
       - run: npm run check
       - run: npm run test-cov
       - uses: codecov/codecov-action@v3
-        if: ${{ matrix.node=='12.x' }}
