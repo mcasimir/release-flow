@@ -1,51 +1,44 @@
-// import Release from "../../src/Release";
-// import assert, { equal } from "assert";
+import fs from "fs";
+import assert, { equal } from "assert";
+import Release from "../../src/Release";
+import plugin from "../../src/plugins/bump-package-json";
 
 describe("plugins", function () {
-  //   describe.skip("bumpPackageJson", function () {
-  //     beforeEach(function () {
-  //       this.writeFileSyncCalls = [];
-  //       // import mock from 'mock-require';
-  //       mock("fs", {
-  //         writeFileSync: (path, data) => {
-  //           this.writeFileSyncCalls.push([path, data]);
-  //         },
-  //         readFileSync: function () {
-  //           return "{}";
-  //         },
-  //       });
-  //       this.bumpPackageJson = mock.reRequire(
-  //         "../../src/plugins/bump-package-json"
-  //       ).default;
-  //     });
-  //     afterEach(function () {
-  //       mock.stopAll();
-  //     });
-  //     it("installs a step", function () {
-  //       let release = new Release({
-  //         plugins: [this.bumpPackageJson],
-  //       });
-  //       let step = release.phases.start.steps.find(
-  //         (step) => step.name === "bumpPackageJson"
-  //       );
-  //       assert(step);
-  //     });
-  //     it("writes nextVersion on package json", function () {
-  //       let release = new Release({
-  //         plugins: [this.bumpPackageJson],
-  //       });
-  //       release.nextVersion = "1.2.3";
-  //       let step = release.phases.start.steps.find(
-  //         (step) => step.name === "bumpPackageJson"
-  //       );
-  //       step.run(release);
-  //       equal(
-  //         this.writeFileSyncCalls[0][1],
-  //         `{
-  //   "version": "1.2.3"
-  // }
-  // `
-  //       );
-  //     });
-  //   });
+  describe("bumpPackageJson", function () {
+    beforeEach(function () {
+      fs.renameSync("package.json", "package.json.bkp");
+      fs.writeFileSync("package.json", "{}");
+    });
+    afterEach(function () {
+      fs.unlinkSync("package.json");
+      fs.renameSync("package.json.bkp", "package.json");
+    });
+    it("installs a step", function () {
+      let release = new Release({
+        plugins: [plugin],
+      });
+      let step = release.phases.start.steps.find(
+        (step) => step.name === "bumpPackageJson"
+      );
+      assert(step);
+    });
+    it("writes nextVersion on package json", function () {
+      let release = new Release({
+        plugins: [plugin],
+      });
+      release.nextVersion = "1.2.3";
+      let step = release.phases.start.steps.find(
+        (step) => step.name === "bumpPackageJson"
+      );
+      step.run(release);
+      const packageJson = fs.readFileSync("package.json", "utf-8");
+      equal(
+        packageJson,
+        `{
+  "version": "1.2.3"
+}
+`
+      );
+    });
+  });
 });
