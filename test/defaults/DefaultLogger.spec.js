@@ -4,6 +4,12 @@ import DefaultLogger from "../../src/defaults/DefaultLogger";
 import { bold, red, yellow, white, gray } from "chalk";
 
 describe("DefaultLogger", function () {
+  before(function () {
+    if (process.env.CI) {
+      this.skip();
+    }
+  });
+
   describe("new DefaultLogger()", function () {
     it("has default level == info", function () {
       let logger = new DefaultLogger();

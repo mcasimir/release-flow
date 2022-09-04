@@ -55,7 +55,6 @@ export default class Release {
     if (typeof fnOrString === "function") {
       fnOrString(this);
     } else {
-      console.log(Release.plugins);
       Release.plugins[fnOrString](this);
     }
   }
