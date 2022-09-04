@@ -18,7 +18,7 @@
     "clean": "rm -Rf ./lib",
     "release": "ts-node ./lib/cli.js",
     "compile": "tsc -p tsconfig.json",
-    "prepare" : "npm run compile"
+    "prepare": "npm run compile"
   },
   "bin": {
     "release-flow": "./lib/cli.js"
