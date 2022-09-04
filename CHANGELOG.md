@@ -1,3 +1,10 @@
+<a name="v1.2.2"></a>
+# [v1.2.2](https://github.com/mcasimir/release-flow/compare/v1.2.1...v1.2.2)
+
+## Fixes
+
+- correct sort for tags history retrieving ([9f7c3a5](https://github.com/mcasimir/release-flow/commits/9f7c3a5b3c2474fc1b3bfa0a3d08e204e068932f))
+
 <a name="v1.2.1"></a>
 
 # [v1.2.1](https://github.com/mcasimir/release-flow/compare/v1.2.0...v1.2.1)
