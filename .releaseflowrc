@@ -1,11 +1,11 @@
 module.exports = {
-  logLevel: 'debug',
-  developmentBranch: 'master',
+  logLevel: "debug",
+  developmentBranch: "master",
   plugins: [
-    'bump-package-json',
-    'generate-changelog',
-    function() {
-      require('child_process').execSync(`npm run build`);
-    }
-  ]
+    "bump-package-json",
+    "generate-changelog",
+    function () {
+      require("child_process").execSync(`npm run compile`);
+    },
+  ],
 };
